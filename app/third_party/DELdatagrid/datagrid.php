@@ -21,46 +21,46 @@ Class Datagrid {
 		static::$table .= "<script src='".BASE_URL."public/vendors/DataTables/Buttons-1.3.1/js/buttons.flash.min.js'></script>";
 	}
 
-	public static function set_options($model, $method, $params = '', $state_save = 'false', $select = false)
-	{
-		static::$state_save = $state_save;
-		static::$select = $select;
+	// public static function set_options($model, $method, $params = '', $state_save = 'false', $select = false)
+	// {
+	// 	static::$state_save = $state_save;
+	// 	static::$select = $select;
 
-		if ($select)
-		{
-			static::$table .= "<script src=".BASE_URL.'public/vendors/DataTables/Select-1.2.2/js/dataTables.select.min.js'."></script>";
-		}
+	// 	if ($select)
+	// 	{
+	// 		static::$table .= "<script src=".BASE_URL.'public/vendors/DataTables/Select-1.2.2/js/dataTables.select.min.js'."></script>";
+	// 	}
 
-		if (!is_array($params) AND $params != '')
-		{
-			$params_string = "&params={$params}";
-		}
-		else
-		{
-			foreach ($params AS $p)
-			{
-				$params_string .= "&params[]={$p}";
-			}
-		}
+	// 	if (!is_array($params) AND $params != '')
+	// 	{
+	// 		$params_string = "&params={$params}";
+	// 	}
+	// 	else
+	// 	{
+	// 		foreach ($params AS $p)
+	// 		{
+	// 			$params_string .= "&params[]={$p}";
+	// 		}
+	// 	}
 
-		$url_json = BASE_URL."umvc/tools/json_table_grid/?model={$model}&method={$method}{$params_string}";
+	// 	$url_json = BASE_URL."umvc/tools/json_table_grid/?model={$model}&method={$method}{$params_string}";
 
-		if ($url_json == FALSE)
-		{
-			// Acá debería poner la tabla vacía
-			die("Ooops");
-		}
+	// 	if ($url_json == FALSE)
+	// 	{
+	// 		// Acá debería poner la tabla vacía
+	// 		die("Ooops");
+	// 	}
 
-		$unique_id = static::$instance_id;
-		static::$url_json = $url_json;
+	// 	$unique_id = static::$instance_id;
+	// 	static::$url_json = $url_json;
 
-		static::$table .= "
-			<table id='datagrid_{$unique_id}' class='responsive'>
-				<thead>
-					<tr>
-		";
+	// 	static::$table .= "
+	// 		<table id='datagrid_{$unique_id}' class='responsive'>
+	// 			<thead>
+	// 				<tr>
+	// 	";
 
-	}
+	// }
 
 	/* ADD COLUMN */
 	public static function add_column($title, $column_id, $class = NULL)

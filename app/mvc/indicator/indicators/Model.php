@@ -54,33 +54,64 @@ public function get_by_id($id)
 	return $this->db->query($sql)->fetchAll();
 }
 
+public function change_visibility_indicator_goals($id, $visibility){
+	$sql = "
+		UPDATE `indicator_goals` SET
+		`goal` = NULL,
+		`upper_limit` = NULL,
+		`lower_limit` = NULL,
+		`visibility` = $visibility
+		WHERE `id` = $id;
+	";
+
+	return $this->db->query($sql);
+}
 /*------------------------------------------------------------------------------
 	GET ALL
 ------------------------------------------------------------------------------*/
 public function get_all(){
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
 	$sql = "
 
 		SELECT		i.id,
 					i.name,
 					i.formula,
-					i.upper_limit,
-					i.lower_limit,
+					indg.upper_limit,
+					indg.lower_limit,
 					i.type_id,
-					i.goal,
+					indg.goal,
 					i.category_id,
 					i.frequency_id,
 					i.process_id,
 					f.name AS 'frequency',
 					t.name AS 'type',
-					GROUP_CONCAT(c.id SEPARATOR ', ') AS 'charge_id',
-    				GROUP_CONCAT(c.job_position SEPARATOR ',') AS 'job_position',
+					GROUP_CONCAT(DISTINCT c.id SEPARATOR ', ') AS 'charge_id',
+    				GROUP_CONCAT(DISTINCT c.job_position SEPARATOR ',') AS 'job_position',
 					c.user_id AS 'chager',
 					p.name AS 'process',
 					p.company_id,
 					tp.name AS 'type_process',
 					i.unit
 		FROM		indicator_indicators AS i
+		INNER JOIN(
+			SELECT
+				igg.indicator_id,
+				igg.goal,
+				igg.upper_limit,
+				igg.lower_limit
+			FROM
+				indicator_goals AS igg
+				WHERE igg.visibility = 1
+				GROUP BY igg.indicator_id
+			ORDER BY
+				igg.indicator_id
+			DESC
+		) indg
+		ON
+			indg.indicator_id = i.id
 		LEFT JOIN  indicator_user_indicator AS ii 
 					ON ii.indicator_id = i.id 
 		LEFT JOIN  indicator_charges AS c
@@ -103,6 +134,53 @@ public function get_all(){
 	return $this->db->query($sql)->fetchAll();
 }
 
+/*------------------------------------------------------------------------------
+	Update record in indicator_goals table and save the register in indicator_goal_log
+------------------------------------------------------------------------------*/
+public function edit_indicator_goals($id, $goal, $lsup, $linf){
+	$sql = "
+		UPDATE `indicator_goals` SET
+			`goal` = '$goal',
+			`upper_limit` = '$lsup',
+			`lower_limit` = '$linf'
+			WHERE `id` = '$id';
+	";
+	return $this->db->query($sql);
+}
+
+public function insert_indicator_goal_log($id_goal, $prev, $nuev){
+	$sql = "
+		INSERT INTO `indicator_goals_modification_log`(
+			`id`,
+			`unchanged_fields`,
+			`modified_fields`,
+			`indicator_goal_id`,
+			`modified_by`,
+			`modification_date`
+		)
+		VALUES(
+			NULL,
+			'$prev',
+			'$nuev',
+			'$id_goal',
+			'{$_SESSION['user']['id']}',
+			NOW()
+		)
+	";
+	return $this->db->query($sql);
+}
+
+/*------------------------------------------------------------------------------
+	select record from indicator_goal by id
+------------------------------------------------------------------------------*/
+public function select_indicator_goal_byid($id){
+	$sql = "
+		SELECT `id`, `goal`, `upper_limit`, `lower_limit`
+			FROM `indicator_goals`
+		where id = $id
+	";
+	return $this->db->query($sql)->fetchAll();
+}
 /*------------------------------------------------------------------------------
 	GET ALL
 ------------------------------------------------------------------------------*/
@@ -264,6 +342,45 @@ public function get_search_category($category,$process,$indicator){
 		GROUP BY i.id";
 
 		
+	return $this->db->query($sql)->fetchAll();
+}
+
+/*------------------------------------------------------------------------------
+	insert goals in table goals
+------------------------------------------------------------------------------*/
+
+public function insert_in_indicator_goals($id, $goal, $upper_limit, $lower_limit){
+	$sql = "
+	INSERT INTO `indicator_goals` (`indicator_id`, `goal`, `upper_limit`, `lower_limit`, `year`, `created_by`, `creation_date`)
+	VALUES (' {$id} ', '{$goal}', '{$upper_limit}', '{$lower_limit}', year(now()), '{$_SESSION['user']['id']}', now());";
+
+	$this->db->query($sql);
+	return $this->db->lastInsertId();
+
+}
+
+/*------------------------------------------------------------------------------
+	GET ALL GOALS FROM AN INDICATOR
+------------------------------------------------------------------------------*/
+public function get_all_goals_indicator($id){
+	$sql = "
+			SELECT
+				ig.id,
+				ig.indicator_id,
+				ig.goal,
+				ig.upper_limit,
+				ig.lower_limit,
+				ig.year,
+				ig.created_by,
+				DATE(ig.creation_date) AS 'creation_date'
+			FROM
+				`indicator_goals` AS ig
+			WHERE
+				ig.indicator_id = $id
+			AND ig.visibility = 1
+			ORDER BY ig.creation_date DESC
+	";
+
 	return $this->db->query($sql)->fetchAll();
 }
 /*------------------------------------------------------------------------------

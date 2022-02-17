@@ -21,7 +21,9 @@ form input,
 form .input,
 form textarea,
 form select,
-form fieldset	{float: left;}
+form fieldset	{
+	/*float: left;*/
+}
 
 pre,
 blockquote,
@@ -108,10 +110,10 @@ select:focus {
 	outline: 0;
 }
 label,legend {
-	display: block;
+	/*display: block;*/
 	
 	font-weight: 600;
-	width: 100%;	
+	/*width: 100%;	*/
 }
 
 input[type="submit"] { clear: both; }
@@ -139,8 +141,8 @@ form button,
 form input[type="submit"],
 form input[type="reset"],
 form input[type="button"] {
-	height: 38px;
-	line-height: 38px;
+	/*height: 38px;
+	line-height: 38px;*/
 }
 
 .button, button, input[type="submit"], input[type="reset"], input[type="button"] {

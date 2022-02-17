@@ -65,8 +65,13 @@ if (empty($_SERVER['HTTP_X_REQUESTED_WITH']) OR strtolower($_SERVER['HTTP_X_REQU
 			$_SESSION['penultimate']['prefix']		= $_SESSION['last']['prefix'];
 			$_SESSION['penultimate']['controller']	= $_SESSION['last']['controller'];
 			$_SESSION['penultimate']['method']		= $_SESSION['last']['method'];
+<<<<<<< HEAD
 			$_SESSION['penultimate']['params']		= $_SESSION['last']['params'];
 			$_SESSION['penultimate']['uri']			= (($_SESSION['last']['uri'])? $_SESSION['last']['uri'] : NULL);
+=======
+			$_SESSION['penultimate']['params']		= ((isset($_SESSION['last']['params']))? $_SESSION['last']['params'] : NULL);
+			$_SESSION['penultimate']['uri']			= ((isset($_SESSION['last']['uri']))? $_SESSION['last']['uri'] : NULL);
+>>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
 
 			$_SESSION['last']['prefix']		= $_SESSION['prefix'];
 			$_SESSION['last']['controller']	= $_SESSION['controller'];
@@ -177,6 +182,20 @@ class ControllerBase {
 
 		ob_start();
 		require "app/templates/{$template}.php";
+		$content = ob_get_contents();
+		ob_end_clean();
+
+		echo $content;
+	}
+
+	function view2($title = '', Array $data = NULL, $template = 'default')
+	{
+		$data['title'] = $title;
+
+		extract($data);
+
+		ob_start();
+		// require "app/templates/{$template}.php";
 		$content = ob_get_contents();
 		ob_end_clean();
 

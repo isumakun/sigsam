@@ -44,7 +44,7 @@
     <input type="text" name="indicator_id" style="display: none;" value="<?= $indicators['id'] ?>">
 
 <div class="row marginb">
-    <?php if($indicators['frequency_id']!=1){ ?>
+    
       <div class="col-md-4">
         <label for="period_id">Año:</label>
         <select name="age_id" required>
@@ -53,16 +53,17 @@
         <?php }  ?>
       </select>
     </div>
-  <?php } ?>
   
-  <div class="col-md-4">
-    <label for="period_id">Periodo:</label>
-    <select id="age" name="period_id" required>
-     <?php foreach($period AS $p) { if ($p['indicator_id'] == $indicators['id']) {  ?> ?>
-      <option value="<?=$p['id']?>" <?=($indicators['period_id'] == $p['id'] ? 'selected' : '')?>><?=$p['name']?></option>
-      <?php }}  ?>
-    </select>
-  </div>
+  <?php if($indicators['frequency_id']!=1){ ?>
+    <div class="col-md-4">
+      <label for="period_id">Periodo:</label>
+      <select id="age" name="period_id" required>
+       <?php foreach($period AS $p) { if ($p['indicator_id'] == $indicators['id']) {  ?> ?>
+        <option value="<?=$p['id']?>" <?=($indicators['period_id'] == $p['id'] ? 'selected' : '')?>><?=$p['name']?></option>
+        <?php }}  ?>
+      </select>
+    </div>
+  <?php } ?>
   <div class="col">
     <label for="value">Valor:</label>
     <?php if($indicators['unit'] == "Horas" ){ ?>

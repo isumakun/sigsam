@@ -72,7 +72,7 @@ tr th {
         <div class="padding_10_000">
             <center><h2>MATRIZ DE SEGUIMIENTO Y MEDICIÓN</h2></center>
         </div>
-        
+        <button id="tooglev">lets see</button>
         <div class="proobing custom_scroll">
             <table id="example" class="display fixTableHead no_responsive" cellspacing="0" width="100%">
                 <thead class="">
@@ -271,12 +271,18 @@ var allPages = table.fnGetNodes();
     })
 
 
-    $(document).on('submit', 'form', function(e){
-        // e.preventDefault()
+    $(document).on('click', '#tooglev', function(e){
+        e.preventDefault()
+        $.get( "indicator/mockups/index", function( data ) {
+          $( ".proobing" ).html( data );
+          // alert( "Load was performed." );
+        });
         // table.state.clear();
         // $(this).submit();
         // $.fn.dataTable.Api.state.clear();
     })
+
+
    
      
 } );
@@ -306,6 +312,8 @@ function createbuttons(){
     ;
     return html;
 }
+
+
 
 
 </script>

@@ -7,7 +7,7 @@ Class Model extends \ModelBase {
 /*------------------------------------------------------------------------------
 	GET ALL
 ------------------------------------------------------------------------------*/
-	public function get_all($company)
+	public function get_all()
 	{
 		return $this->db->query("
 
@@ -21,7 +21,7 @@ Class Model extends \ModelBase {
 						ON tp.id = p.type_process_id
 			INNER JOIN	indicator_companies AS cs
 						ON cs.id = p.company_id
-		    WHERE p.company_id = '$company'
+		    WHERE p.company_id = {$_SESSION['user']['company_id']}
 			ORDER BY	p.id ASC
 
 		")->fetchAll();

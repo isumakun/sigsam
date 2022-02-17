@@ -14,28 +14,28 @@ Class Datagrid {
 		static::$table .= "<script src=".BASE_URL.'public/vendors/DataTables/datatables.min.js'."></script>";
 	}
 
-	public static function set_options($prefix, $class, $method, $params = '', $state_save = 'false')
-	{
-		static::$state_save = $state_save;
+	// public static function set_options($prefix, $class, $method, $params = '', $state_save = 'false')
+	// {
+	// 	static::$state_save = $state_save;
 
-		//$url_json = base_url($url_json);
-		$url_json = BASE_URL."umvc/tools/json_table_grid?prefix={$prefix}&class={$class}&method={$method}&params={$params}";
+	// 	//$url_json = base_url($url_json);
+	// 	$url_json = BASE_URL."umvc/tools/json_table_grid?prefix={$prefix}&class={$class}&method={$method}&params={$params}";
 
-		if ($url_json == FALSE)
-		{
-			// Acá debería poner la tabla vacía
-			die("Ooops");
-		}
+	// 	if ($url_json == FALSE)
+	// 	{
+	// 		// Acá debería poner la tabla vacía
+	// 		die("Ooops");
+	// 	}
 
-		$unique_id = static::$instance_id;
-		static::$url_json = $url_json;
+	// 	$unique_id = static::$instance_id;
+	// 	static::$url_json = $url_json;
 
-		static::$table .= "
-			<table id='datagrid_{$unique_id}' class='responsive'>
-				<thead>
-					<tr>
-		";
-	}
+	// 	static::$table .= "
+	// 		<table id='datagrid_{$unique_id}' class='responsive'>
+	// 			<thead>
+	// 				<tr>
+	// 	";
+	// }
 
 	/* ADD COLUMN */
 	public static function add_column($title, $column_id, $class = NULL)

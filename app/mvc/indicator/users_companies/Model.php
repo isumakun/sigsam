@@ -49,8 +49,7 @@ Class Model extends \ModelBase {
 /*------------------------------------------------------------------------------
 	GET BY USER ID
 ------------------------------------------------------------------------------*/
-	public function get_by_user_id($user_id)
-	{
+	public function get_by_user_id($user_id){
 		return $this->db->query("
 
 			SELECT		uc.id,

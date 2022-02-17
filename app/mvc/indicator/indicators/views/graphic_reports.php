@@ -1,8 +1,8 @@
 <style type="text/css">
   .highcharts-figure, .highcharts-data-table table {
-      min-width: 310px; 
-  	max-width: 800px;
-      margin: unset;
+    min-width: 310px; 
+    max-width: 800px;
+    margin: unset;
   }
   .highcharts-data-table table {
   	font-family: Verdana, sans-serif;
@@ -329,14 +329,56 @@ $(document).ready(function(){
 
           $.post( "/indicator/indicator/indicators/report_graph_filter", { age_id: age_id, id: id1, frequency_id: frequency_id })
             .done(function( data ) {
+
               data = JSON.parse(data);
+              console.log(data)
               var catg = data.graph[0]['period'].split(',');
               data_csv = data.graph[0]['value'].split(',');
               data_csv.forEach(logArrayElements);
               chart2 = $('#container23').highcharts();
+              chart2.yAxis[0].removePlotLine('first');
+              chart2.yAxis[0].removePlotLine('second');
+              
+               chart2.yAxis[0].addPlotLine({
+                value: data.lower_l,
+                id: 'first',
+                dashStyle: 'LongDash',
+                zIndex: 10,
+                width: 2,
+                color: '#ff0000',
+                label:{
+                  text:data.gl1+': '+ data.lower_l,
+                  x: -55,
+                style: {
+                  color: '#FFFFFF',
+                  'textOutline': '1px contrast'
+                }
+              }
+              });
+               chart2.yAxis[0].addPlotLine({
+                  value: data.upper_l,
+                  id: 'second',
+                  dashStyle: 'LongDash',
+                  zIndex: 5,
+                  width: 2,
+                  color: '#ff0000',
+                  label:{
+                    text: `${ (data.gl2)? data.gl2+': '+ data.upper_l : ''}`,
+                    align: 'left',
+                    x: -55,
+                    y:-10,
+                    style: {
+                      color: '#FFFFFF',
+                      'textOutline': '1px contrast',
+
+                    }
+                }
+              });
               chart2.series[0].update({data: data_csv});
               chart2.series[1].update({data: data_csv});
               chart2.xAxis[0].update({categories:catg});
+              delimit_boundaries(axis, htmlEntityChecker(data.analysis[0].goal), data.lower_l, data.upper_l, data.gl2);
+              chart2.yAxis[0].redraw();
               
             });
           
@@ -366,6 +408,7 @@ $(document).ready(function(){
           },
             plotLines: [{
               value: lower_l,
+              id: 'first',
               dashStyle: 'LongDash',
               zIndex: 10,
               width: 2,
@@ -381,6 +424,7 @@ $(document).ready(function(){
           },
           {
               value: upper_l,
+              id: 'second',
               dashStyle: 'LongDash',
               zIndex: 5,
               width: 2,
@@ -461,6 +505,7 @@ $(document).ready(function(){
         }
       });
 var axis = $('#container23').highcharts().colorAxis[0];
+<<<<<<< HEAD
   if(metakind == 2 ){
     
       axis.update({
@@ -557,16 +602,127 @@ var axis = $('#container23').highcharts().colorAxis[0];
             },
             {
               from: (upper_l*1 + 0.1),            
+=======
+
+  delimit_boundaries(axis, metakind, lower_l, upper_l, gl2);
+
+  function delimit_boundaries(axis, metakind, lower_l, upper_l, gl2){
+    if(metakind == 2 ){
+    
+        axis.update({
+            dataClasses: [{
+                to: lower_l,
+                color: '#4AAD45',
+                name: 'Cumple'
+
+            }, {
+               from: lower_l,
+              color: '#FF2424',
+              name: 'No cumple'
+            }]
+        });
+    }
+    if(metakind == 3 ){
+      
+        axis.update({
+            dataClasses: [{
+                from: lower_l,
+                color: '#4AAD45',
+                name: 'Cumple',
+
+            }, {
+               to: lower_l,
+              color: '#FF2424',
+              name: 'No cumple'
+            }]
+        });
+    }
+    if(metakind == 0 ){
+      
+        axis.update({
+            dataClasses: [
+            {
+                from: lower_l,
+                color: '#4AAD45',
+                name: 'Cumple'
+
+            },
+            {
+               to: ((lower_l*1 - 0.1)),
+              color: '#FF2424',
+              name: 'No cumple'
+            }]
+        });
+    }
+    if(metakind == 1 ){
+      
+        axis.update({
+            dataClasses: [
+            {
+                to: lower_l,
+                color: '#4AAD45',
+                name: 'Cumple'
+
+            },
+            { 
+              from: (lower_l*1 + 0.1),
+              color: '#FF2424',
+              name: 'No cumple'
+            }]
+        });
+    }
+    if(metakind == -1){
+      if(!gl2){
+        axis.update({
+            dataClasses: [
+            {
+               to: upper_l,
+              from: lower_l,   
+              color: '#4AAD45',
+              name:  'Cumple'
+            },
+            {
+              to:(lower_l-5),         
+>>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
               color: '#FF2424',
               name: 'No cumple'
 
             },
             ]
         });
+<<<<<<< HEAD
       }
       
     }      
   }
+=======
+      }else{
+        var sign_u = htmlEntityChecker('<?= $data['analysis'][0]['upper_limit'] ?>')
+        var sign_d = htmlEntityChecker('<?= $data['analysis'][0]['lower_limit'] ?>')
+        if(sign_u == -1 && sign_d == -1){
+          axis.update({
+              dataClasses: [
+              {
+                from : lower_l,
+                 to: upper_l,
+                color: '#4AAD45',
+                name:  'Cumple'
+              },
+              {
+                from: (upper_l*1 + 0.1),            
+                color: '#FF2424',
+                name: 'No cumple'
+
+              },
+              ]
+          });
+        }
+        
+      }      
+    }
+  }
+ 
+>>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
 
 $('#polar').click(function () {
 charts.update({

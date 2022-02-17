@@ -8,11 +8,13 @@ class Controller extends ControllerBase {
 	public function index()
 	{
 		// $this->view('Inicio', $data, 'fullwidth');
-		if(has_role(3)){
-			$data['indicators'] = $this->model('indicator/indicators')->getall_by_rol($_SESSION['user']['company_id']);
-		}else{
-			$data['indicators'] = $this->model('indicator/indicators')->get_all($_SESSION['user']['company_id']);
-		}
+		$data['indicators'] = $this->model('indicator/indicators')->get_all($_SESSION['user']['company_id']);
+		
+		// if(has_role(2)|| has_role(3)){
+		// 	$data['indicators'] = $this->model('indicator/indicators')->getall_by_rol($_SESSION['user']['company_id']);
+		// }else{
+		// 	$data['indicators'] = $this->model('indicator/indicators')->get_all($_SESSION['user']['company_id']);
+		// }
 		
 		$data['page_title'] = 'Indicadores';
 		$this->view('', $data, 'fullwidth');
@@ -28,6 +30,6 @@ class Controller extends ControllerBase {
 
 		/*Y aquí la cambias :D*/
 
-		redirect('tbs/dashboard', 'Empresa cambiada a: '.$company['name']);
+		redirect('indicator/dashboard', 'Empresa cambiada a: '.$company['name']);
 	}
 }

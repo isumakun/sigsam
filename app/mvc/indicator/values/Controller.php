@@ -16,45 +16,53 @@ Class Controller extends ControllerBase {
 /*------------------------------------------------------------------------------
 	CREATE
 	------------------------------------------------------------------------------*/
-	public function create()
-	{
+	public function create(){
 		
 		if ($_POST)
 		{
 			$_POST['created_by'] = $_SESSION['user']['id'];
 			$extension = '';
-			if ($_FILES)
-			{
+			// if ($_FILES) {
 
-				if($_FILES['file_upload']['size'] > 500000)
-				{
-					redirect_back('El archivo excede la capacidad máxima permitida (50 mb)', 'error');
-				}
+				// if($_FILES['file_upload']['size'] > 500000)
+				// {
+				// 	redirect_back('El archivo excede la capacidad máxima permitida (50 mb)', 'error');
+				// }
 
-				$extension = explode('.', $_FILES['support']['name']);
+				// die();
 
-				$extension = end($extension);
-				$_POST['file_extension'] = $extension;
-				$extension1 = explode('.', $_FILES['support1']['name']);
-				$extension1 = end($extension1);
-				$_POST['file_extension1'] = $extension1;
+				// $extension = explode('.', $_FILES['support']['name']);
 
-			}
+				// $extension = end($extension);
+				// $_POST['file_extension'] = $extension;
+				// $extension1 = explode('.', $_FILES['support1']['name']);
+				// $extension1 = end($extension1);
+				// $_POST['file_extension1'] = $extension1;
 
-			if ($_FILES['support']['size']!=0) {
+			// }
+			
+			if (!empty($_FILES['support']['size'])) {
 				$prefix1 = rand(1, 10000);
+<<<<<<< HEAD
 				$dir1 = "./public/uploads/".$prefix1.'_'. $_FILES['support']['name'];
+=======
+				$dir1 = $_SERVER['DOCUMENT_ROOT']."/indicator/public/uploads/".$prefix1.'_'. $_FILES['support']['name'];
+				echo $dir1;
+>>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
 				$_POST['support'] = $dir1;
+				// die($_SERVER['DOCUMENT_ROOT']);
 				move_uploaded_file($_FILES['support']['tmp_name'], $dir1);
+				// die('is here');
 			}
-			if ($_FILES['support1']['size']!=0) {
+			if (!empty($_FILES['support1']['size'])) {
 				$prefix2 = rand(1, 10000);
 				$dir2 = "/public/uploads/".$prefix2.'_'. $_FILES['support1']['name'];
 				$_POST['support1'] = $dir2;
 				move_uploaded_file($_FILES['support1']['tmp_name'], $dir2);
 			}
 			
-			
+			// echo '<pre>'.print_r($_FILES['support']).'</pre>';
+			// die();
 			if ($id_inform = $this->model('indicator/values')->create($_POST)){
 				
 				set_notification("Registro creado correctamente", 'success', TRUE);
@@ -155,7 +163,7 @@ Class Controller extends ControllerBase {
 		// 		'allow_self_signed' => true
 		// 	)
 		// );
-		$sendstate = $mail->Send();
+		// $sendstate = $mail->Send();
 		$mail->clearAllRecipients();
 
 		// $id=$_GET['id'];
@@ -201,7 +209,7 @@ Class Controller extends ControllerBase {
 				$path = getcwd();
 				if ($_FILES['support']['size']!=0) {
 					$prefix1 = rand(1, 10000);
-					$dir1 = "./public/uploads/".$prefix1.'_'.$_FILES['support']['name'];
+					$dir1 = "/public/uploads/".$prefix1.'_'.$_FILES['support']['name'];
 					$_POST['support'] = $dir1;
 					move_uploaded_file($_FILES['support']['tmp_name'], $dir1);
 					
@@ -223,7 +231,7 @@ Class Controller extends ControllerBase {
 				}
 				if ($_FILES['support1']['size']!=0) {
 					$prefix2 = rand(1, 10000);
-					$dir2 = "./public/uploads/".$prefix2.'_'. $_FILES['support1']['name'];
+					$dir2 = "/public/uploads/".$prefix2.'_'. $_FILES['support1']['name'];
 					$_POST['support1'] = $dir2;
 					move_uploaded_file($_FILES['support1']['tmp_name'], $dir2);
 

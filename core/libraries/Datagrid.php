@@ -14,6 +14,7 @@ Class Datagrid {
 
 	public static function set_options($model, $method, $params, $state_save = TRUE)
 	{
+		
 		static::$model = $model;
 		static::$method = $method;
 		static::$params = $params;

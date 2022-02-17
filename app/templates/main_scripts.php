@@ -115,7 +115,7 @@ if (isset($_SESSION['notifications']))
 			var url = "<?= BASE_URL ?>indicator/indicators/analysis_filter";
 			var url_action = "<?= BASE_URL ?>indicator/indicators/analysis_filter_results";
 			
-			$('#analisis_modal').add('show');
+			// $('#analisis_modal').add('show');
 			$.ajax({
 				type  : 'POST',
 				url   : url,

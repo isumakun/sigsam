@@ -45,10 +45,24 @@
             Configuración
           </a>
           <ul class="nav-dropdown-items">
-            
-            <?=make_link_menu('indicator/type_processes', '<i class="nav-icon fa fa-list"></i> Tipos de Procesos</a>', '')?>
-            <?=make_link_menu('indicator/types', '<i class="nav-icon fa fa-list"></i> Tipos de Indicadores</a>', '')?>
-            <?=make_link_menu('indicator/companies', '<i class="nav-icon fa fa-list"></i> Empresas</a>', '')?>
+            <li class="nav-item">
+              <a class="nav-link" href="<?=BASE_URL?>indicator/type_processes">
+                <i class="nav-icon fa fa-list"></i>
+                Tipos de Procesos
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="<?=BASE_URL?>admin/users">
+                <i class="nav-icon fa fa-list"></i>
+                Tipos de Indicadores
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="<?=BASE_URL?>admin/users">
+                <i class="nav-icon fa fa-list"></i>
+                Empresas
+              </a>
+            </li>
             <li class="nav-item">
               <a class="nav-link" href="<?=BASE_URL?>admin/users">
                 <i class="nav-icon icon-user"></i> 

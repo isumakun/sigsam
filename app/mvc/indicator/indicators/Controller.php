@@ -7,11 +7,12 @@ Class Controller extends ControllerBase {
 ------------------------------------------------------------------------------*/
 	public function index()
 	{
-		if(has_role(3)){
-			$data['indicators'] = $this->model('indicator/indicators')->getall_by_rol($_SESSION['user']['company_id']);
-		}else{
-			$data['indicators'] = $this->model('indicator/indicators')->get_all($_SESSION['user']['company_id']);
-		}
+		$data['indicators'] = $this->model('indicator/indicators')->get_all($_SESSION['user']['company_id']);
+		// if(has_role(2) || has_role(3) ){
+		// 	$data['indicators'] = $this->model('indicator/indicators')->getall_by_rol($_SESSION['user']['company_id']);
+		// }else{
+		// 	$data['indicators'] = $this->model('indicator/indicators')->get_all($_SESSION['user']['company_id']);
+		// }
 		
 		$data['page_title'] = 'Indicadores';
 		$this->view('', $data, 'fullwidth');
@@ -43,13 +44,22 @@ Class Controller extends ControllerBase {
 				$data['indicators'][$key]['support1'] = an_route($values['id'], $values['indicator_id'], $values['support1']);
 			}
 			$data['ages'] = $this->model('indicator/values')->get_age_id($_GET['id']);
-			$data['analysis'] = $this->model('indicator/values')->get_name($_GET['id']);
+			// $data['analysis'] = $this->model('indicator/values')->get_name($_GET['id']);
+
+			$data['analysis'] = $this->model('indicator/values')->get_name($_GET['id'], date("Y-m-d"));
+
 			$data['graph'] = $this->model('indicator/values')->get_graph_filter($_GET['id'], date("Y-m-d"));
 			$data['page_title'] = 'Reporte Grafico';
 			preg_match(
+<<<<<<< HEAD
 			    '/[0-9]\d*(\.\d+)?/',
 			    $data['analysis'][0]['goal'],
 			    $matches
+=======
+				'/[0-9]\d*(\.\d+)?/',
+				$data['analysis'][0]['goal'],
+				$matches
+>>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
 			);
 			$data['upper_l'] = null;
 			$data['gl2'] = null;
@@ -63,6 +73,7 @@ Class Controller extends ControllerBase {
 			}
 			if(isset($data['analysis'][0]['lower_limit']) && $data['analysis'][0]['lower_limit'] !=""  && isset($data['analysis'][0]['upper_limit']) && $data['analysis'][0]['upper_limit'] !=""){
 				preg_match(
+<<<<<<< HEAD
 				    '/[0-9]\d*(\.\d+)?/',
 				    $data['analysis'][0]['lower_limit'],
 				    $matches
@@ -72,6 +83,17 @@ Class Controller extends ControllerBase {
 				    '/[0-9]\d*(\.\d+)?/',
 				    $data['analysis'][0]['upper_limit'],
 				    $matches
+=======
+					'/[0-9]\d*(\.\d+)?/',
+					$data['analysis'][0]['lower_limit'],
+					$matches
+				);
+				$data['lower_l'] =  str_replace(',', '.', $matches[0]) ;
+				preg_match(
+					'/[0-9]\d*(\.\d+)?/',
+					$data['analysis'][0]['upper_limit'],
+					$matches
+>>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
 				);
 				$data['upper_l'] =  str_replace(',', '.', $matches[0]) ;
 				$data['gl1'] = "Linf";
@@ -121,6 +143,7 @@ Class Controller extends ControllerBase {
 		if($_POST){
 			if($_POST['frequency_id'] == '1'){
 				$data['graph'] = $this->model('indicator/values')->get_graph($_POST['id'], $_POST['age_id']."-01-01");
+<<<<<<< HEAD
 				echo json_encode($data);
 				die;
 			}else{
@@ -128,6 +151,44 @@ Class Controller extends ControllerBase {
 				echo json_encode($data);
 				die;
 			}
+=======
+			}else{
+				$data['graph'] = $this->model('indicator/values')->get_graph_filter($_POST['id'], $_POST['age_id']."-01-01");
+			}
+			$data['analysis'] = $this->model('indicator/values')->get_name($_POST['id'], $_POST['age_id']."-01-01");
+			preg_match(
+				'/[0-9]\d*(\.\d+)?/',
+				$data['analysis'][0]['goal'],
+				$matches
+			);
+			$data['upper_l'] = null;
+			$data['gl2'] = null;
+			if(isset($matches[0])){$data['upper_l'] =  str_replace(',', '.', $matches[0]);}
+			
+
+			if(isset($data['upper_l'])){
+				$data['lower_l'] = $data['upper_l'];
+				$data['gl1'] = "Goal";
+				$data['gl2'] = null;
+			}
+			if(isset($data['analysis'][0]['lower_limit']) && $data['analysis'][0]['lower_limit'] !=""  && isset($data['analysis'][0]['upper_limit']) && $data['analysis'][0]['upper_limit'] !=""){
+				preg_match(
+					'/[0-9]\d*(\.\d+)?/',
+					$data['analysis'][0]['lower_limit'],
+					$matches
+				);
+				$data['lower_l'] =  str_replace(',', '.', $matches[0]) ;
+				preg_match(
+					'/[0-9]\d*(\.\d+)?/',
+					$data['analysis'][0]['upper_limit'],
+					$matches
+				);
+				$data['upper_l'] =  str_replace(',', '.', $matches[0]) ;
+				$data['gl1'] = "Linf";
+				$data['gl2'] = "Lsup";
+			}
+			echo json_encode($data);
+>>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
 			
 		}
 	}
@@ -259,7 +320,7 @@ public function report_search(){
 				$this->model('indicator/indicators')->delete_in_charge_indicator($id_indicator, $_POST['charge_id']);
 				$this->model('indicator/indicators')->insert_in_charge_indicator($id_indicator, $_POST['charge_id']);
 				set_notification("Registro creado correctamente", 'success', TRUE);
-				redirect("indicator/dashboard");
+				redirect("./");
 			}else{
 				set_notification("El registro no pudo ser creado", 'error');
 			}
@@ -274,6 +335,37 @@ public function report_search(){
 		$this->view('',$data);
 	}
 
+
+/*------------------------------------------------------------------------------
+	edit goals in indicator_goals table
+------------------------------------------------------------------------------*/
+public function edit_indicator_goals(){
+	if($_POST){
+		$prev = $this->model('indicator/indicators')->select_indicator_goal_byid($_POST['id']);
+		$UpdatedColumns=array_diff_assoc($_POST,$prev[0]);
+		if(!empty($UpdatedColumns)){
+			if(!isset($_POST['upper_limit']) && $_POST['upper_limit'] == ""){
+				$_POST['upper_limit'] = null;
+			}
+			if(!isset($_POST['lower_limit']) && $_POST['lower_limit'] == ""){
+				$_POST['lower_limit'] = null;
+			}
+			if(!isset($_POST['goal']) && $_POST['goal'] == ""){
+				$_POST['goal'] = null;
+			}
+			$previous = json_encode($prev[0]);
+			$updated = json_encode($UpdatedColumns);
+			if($_POST['upper_limit']==null && $_POST['lower_limit'] == null && $_POST['goal'] == null){
+				$result = $this->model('indicator/indicators')->change_visibility_indicator_goals($_POST['id'], 0);
+				$result = $this->model('indicator/indicators')->insert_indicator_goal_log($_POST['id'], $previous, '{"visibility":"0"}');
+			}else{
+				$result = $this->model('indicator/indicators')->edit_indicator_goals($_POST['id'], $_POST['goal'], $_POST['upper_limit'], $_POST['lower_limit']);
+				$result = $this->model('indicator/indicators')->insert_indicator_goal_log($_POST['id'], $previous, $updated);
+			}
+		}
+	}
+}
+
 /*------------------------------------------------------------------------------
 	EDIT
 ------------------------------------------------------------------------------*/
@@ -286,6 +378,10 @@ public function report_search(){
 		}
 
 		if ($_POST){
+<<<<<<< HEAD
+=======
+			
+>>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
 			if($_POST['opc'] == 1){
 				$_POST['goal'] = null;
 			}
@@ -294,9 +390,21 @@ public function report_search(){
 				$_POST['lower_limit'] = null;
 
 				if($_POST['metakind'] !== html_entity_decode("=")){
+<<<<<<< HEAD
 					$_POST['goal'] = $_POST['metakind'].' '.$_POST['goal'];
 				}
 			}
+=======
+					$goal_toinsert = $_POST['metakind'].' '.$_POST['goal'];
+				}
+			}
+			if($_POST['goal'] != "" && $_POST['goal'] != null){
+				$id_goal_inserted = $this->model('indicator/indicators')->insert_in_indicator_goals($_GET['id'], $goal_toinsert, $_POST['upper_limit'], $_POST['lower_limit']);	
+			}
+			if($_POST['upper_limit'] != "" && $_POST['lower_limit'] != "" && $_POST['upper_limit'] != null  && $_POST['lower_limit'] != null){
+				$id_goal_inserted = $this->model('indicator/indicators')->insert_in_indicator_goals($_GET['id'], $goal_toinsert, $_POST['upper_limit'], $_POST['lower_limit']);	
+			}
+>>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
 			
 			if ($this->model('indicator/indicators')->update_by_id($_GET['id'], $_POST))
 			{
@@ -309,6 +417,7 @@ public function report_search(){
 			{
 				set_notification("El registro no pudo ser actualizado", 'error');
 			}
+<<<<<<< HEAD
 		}
 		preg_match(
 		    '/[0-9]\d*(\.\d+)?/',
@@ -322,6 +431,11 @@ public function report_search(){
 			$data['gl1'] = 1;
 		}
 		
+=======
+		}
+		
+		
+>>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
 		$data['types'] = $this->model('indicator/types')->get_all();
 		$data['process'] = $this->model('indicator/processes')->get_all($_SESSION['user']['company_id']);
 		$data['charges'] = $this->model('indicator/charges')->get_all($_SESSION['user']['company_id']);
@@ -330,6 +444,32 @@ public function report_search(){
 		foreach ($temp as $key) {
 			$data['charges_ind'][] = $key['user_id'];
 		}
+		$goals = $this->model('indicator/indicators')->get_all_goals_indicator($_GET['id']);
+		$data['goals'] = $goals;
+		foreach ($goals as $key => $value) {
+			preg_match(
+				'/[0-9]\d*(\.\d+)?/',
+				$value['goal'],
+				$matches
+			);
+			
+			$data['matches_goal'] = null;
+			$data[$value['id']]['gl1'] = 0;
+			if(isset($matches[0])){$data['matches_goal'][$value['id']] = $matches[0];}else{$data['matches_goal'][$value['id']] = $value['goal'];}
+			if(isset($value['goal']['lower_limit']) && $value['goal']['lower_limit'] !=""  && isset($value['goal']['upper_limit']) && $value['goal']['upper_limit'] !=""){
+				$data[$value['id']]['gl1'] = 1;
+			}
+
+			$data['year_goals'][$value['year']][$value['id']] = array(
+				'id' => $value['id'],
+				'indicator_id' => $value['indicator_id'],
+				'goal' => $data['matches_goal'][$value['id']],
+				'upper_limit' => $value['upper_limit'],
+				'lower_limit' => $value['lower_limit'],
+				'creation_date' => $value['creation_date']
+			);
+		}
+		
 		$data['frequency'] = $this->model('indicator/indicators')->get_frequency();
 		$data['category'] = $this->model('indicator/indicators')->get_category();
 
@@ -350,6 +490,6 @@ public function report_search(){
 			set_notification("No se pudo eliminar", 'Error');
 		}
 
-		redirect("indicator/dashboard");	
+		redirect("./");	
 	}
 }

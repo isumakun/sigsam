@@ -688,22 +688,60 @@ if($age != ""){
 /*------------------------------------------------------------------------------
 	GET ALL
 ------------------------------------------------------------------------------*/
-public function get_name($variable)
+public function get_name($variable, $year)
 {
-	return $this->db->query("
+	$sql = "
+	SELECT
+			i.name 'ind',
+			i.unit,
+			ig.upper_limit,
+			ig.lower_limit,
+			ig.goal,
+			ig.year
+			FROM
+			indicator_indicators AS i
+			INNER JOIN indicator_goals AS ig
+			ON
+			ig.indicator_id = i.id
+			WHERE
+			ig.year =
+			COALESCE(
+		        (
+		        	SELECT
+		                er.`year`
+		            FROM
+		                indicator_informs AS ii
+		            INNER JOIN indicator_ages AS iaa
+		            ON
+		                ii.age_id = iaa.id
+		            inner join  indicator_goals AS er
+		            on er.`year` = iaa.name
+		            WHERE
+		                er.`year` = YEAR('$year') AND ii.indicator_id = $variable
+		            LIMIT 1
+			    ),
+			    (
+			    SELECT
+	                er.`year`
+	            FROM
+	                indicator_informs AS ii
+	            INNER JOIN indicator_ages AS iaa
+	            ON
+	                ii.age_id = iaa.id
+	            inner join  indicator_goals AS er
+	            on er.`year` = iaa.name
+	            WHERE
+		            er.`year` = YEAR(
+			            DATE_SUB('$year', INTERVAL 1 YEAR)
+			        ) AND ii.indicator_id = $variable
+			    LIMIT 1
+			),
+			    ig.`year`
+			    ) AND ig.indicator_id = $variable AND i.visibility = 1
+			ORDER BY ig.`creation_date` DESC LIMIT 1";
+			
 
-		SELECT	
-					i.name 'ind',
-					i.unit,
-				    i.upper_limit,
-				    i.lower_limit,
-				    i.goal
-		FROM		indicator_indicators AS i
-		WHERE      i.id = $variable 
-		AND i.visibility = 1
-		LIMIT		1
-
-	")->fetchAll();
+	return $this->db->query($sql)->fetchAll();
 }
 /*------------------------------------------------------------------------------
 	UPDATE BY ID
@@ -718,16 +756,17 @@ public function update_by_id($id, $params)
 
 		UPDATE		indicator_informs
 		SET			`value` =  COALESCE(NULLIF('{$params['value']}', ''), `value`),
-					`period_id` = '{$params['period_id']}',
+					`period_id` = COALESCE(NULLIF('{$params['period_id']}', ''''), null),
 					`inform` =  COALESCE(NULLIF('{$params['inform']}', ''), `inform`),
 					`support` = COALESCE(NULLIF('{$params['support']}', ''), `support`),
 					`support1` = COALESCE(NULLIF('{$params['support1']}', ''), `support1`),
 					`inform_type_id` = '{$params['inform_type']}',
 					`inform_class_id` = COALESCE(NULLIF('{$params['inform_class']}', ''), `inform_class_id`),
-					`age_id` = COALESCE(NULLIF('{$params['age_id']}', ''), null)
+					`age_id` = COALESCE(NULLIF('{$params['age_id']}', ''''), '{$params['period_id']}')
 		WHERE		id = '$id'
 
 	";
+
 
 	return $this->db->query($sql);
 }

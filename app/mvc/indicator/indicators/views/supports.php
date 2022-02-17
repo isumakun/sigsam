@@ -15,8 +15,8 @@
         ?>
             <td>
             <?php if ($s['support']) {
-                $route = $_SERVER['DOCUMENT_ROOT']."/indicator/public/uploads/".$s['id'].".".end(explode('.',$s['support']));
-                $route2 = $_SERVER['DOCUMENT_ROOT']."/indicator/public/uploads/".$s['inform_id'].".".end(explode('.',$s['support']));
+                $route = "https://nx001.nexter.us-nyc1.upcloudobjects.com/indicator/uploads/".$s['id'].".".end(explode('.',$s['support']));
+                $route2 = "https://nx001.nexter.us-nyc1.upcloudobjects.com/indicator/uploads/".$s['inform_id'].".".end(explode('.',$s['support']));
                 $solution = $_SERVER['DOCUMENT_ROOT']."/indicator".substr($s['support'], 1);
 
 
@@ -38,8 +38,8 @@
             
             <td>
             <?php if ($s['support1']) {
-                $rou = $_SERVER['DOCUMENT_ROOT']."/indicator/public/uploads/".$s['id'].".".end(explode('.',$s['support1']));
-                $rou2 = $_SERVER['DOCUMENT_ROOT']."/indicator/public/uploads/".$s['inform_id'].".".end(explode('.',$s['support1']));
+                $rou = "https://nx001.nexter.us-nyc1.upcloudobjects.com/indicator/uploads/".$s['id'].".".end(explode('.',$s['support1']));
+                $rou2 = "https://nx001.nexter.us-nyc1.upcloudobjects.com/indicator/uploads/".$s['inform_id'].".".end(explode('.',$s['support1']));
                 $solution2 = $_SERVER['DOCUMENT_ROOT']."/indicator".$s['support1'];
 
                 if(!file_exists($solution2)){

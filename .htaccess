@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+
+	Options +FollowSymLinks
+	Options -Indexes
+
+	RewriteEngine on
+	RewriteBase /indicator
+
+	RewriteCond %{REQUEST_FILENAME} !-l
+	RewriteCond %{REQUEST_FILENAME} !-f
+	RewriteCond %{REQUEST_FILENAME} !-d
+
+	RewriteRule ^(.*)$ index.php?$1 [L,QSA]
+
+</IfModule>

@@ -1,0 +1,253 @@
+<?php
+	require 'core/libraries/PDF.php';
+
+	data('form_id', $output_form['form_id']);
+	class TBSPDF extends PDF
+	{
+		function Header()
+		{
+			$form_id = get_data('form_id');
+
+			$this->AliasNbPages();
+
+			$this->add_title('TBS III - FORMULARIO DE SALIDA DE MERCANCÍAS');
+			$this->add_row([
+				['Usuario operador', 'ZONA FRANCA LAS AMÉRICAS S.A.S. - Nit: 900162578-4', 50],
+				['FMM No.', "94332$form_id", 15, 'R'],
+				['Acuerdo', '999 - CO', 10],
+				['Descargado', date('Y-m-d h:i:s'), 15],
+				['Página', $this->PageNo().' de {nb}', 10],
+			]);
+		}
+	}
+
+	$pdf = new TBSPDF('P','mm','letter');
+
+	$pdf->SetAutoPageBreak(false);
+	$pdf->SetMargins(10, 10, 9.9);
+
+	$pdf->AddPage();
+
+	// INFORMACIÓN GENERAL ---------------------------------------------
+	$pdf->add_subtitle('Información general');
+	$nit = substr($_SESSION['user']['company_schema'], 5);
+	$pdf->add_row([
+		['Usuario calificado', $_SESSION['user']['company_name'].' - Nit: '.$nit, 50],
+		['Cliente', $output_form['supplier'].' - Nit: '.$output_form['supplier_nit'], 50]
+	]);
+
+	// FECHAS ---------------------------------------------------------
+	$output_fom['presented_at'] = ($output_fom['presented_at'] == '0000-00-00 00:00:00' ? '' : $output_fom['presented_at']);
+	$output_fom['approved_at'] = ($output_fom['approved_at'] == '0000-00-00 00:00:00' ? '' : $output_fom['approved_at']);
+	$output_fom['executed_at'] = ($output_fom['executed_at'] == '0000-00-00 00:00:00' ? '' : $output_fom['executed_at']);
+
+	$pdf->add_row([
+		['Creado', $output_form['created_at'], 20],
+		['Presentado', $output_form['presented_at'], 20],
+		['Aprobado', $output_form['approved_at'], 20],
+		['Ejecutado', $output_form['executed_at'], 20],
+		['Ajustado', '', 20],
+	]);
+
+	$sum_pack = 0;
+	$sum_weight = 0;
+	$sum_fob = 0;
+	$sum_freights = 0;
+	$sum_insurance = 0;
+	$sum_other_expenses = 0;
+
+	$declarations = array();
+	$cif_cop_final = 0;
+
+	foreach ($output_forms_products as $ifp) {
+		$sum_weight += $ifp['gross_weight'];
+		$sum_fob += $ifp['fob_value'];
+		$sum_freights += $ifp['freights'];
+		$sum_insurance += $ifp['insurance'];
+		$sum_other_expenses += $ifp['other_expenses'];
+
+		if (!in_array($ifp['insurance'], $declarations)) {
+			array_push($declarations, $ifp['insurance']);
+		}
+	}
+
+	$values = array();
+
+	foreach ($declarations as $d) {
+		$aux_usd = 0;
+		$aux_cop = 0;
+		foreach ($output_forms_products as $ifp) {
+			if ($d == $ifp['insurance']) {
+				$cif_usd_product = $ifp['fob_value']+$ifp['freights']+$ifp['insurance']+$ifp['other_expenses'];
+				$aux_usd += $cif_usd_product;
+				$cif_cop_product = round($cif_usd_product, 2)*$output_form['exchange_rate'];
+				$aux_cop += (round($cif_usd_product, 2)*$output_form['exchange_rate']);
+				array_push($values, $cif_cop_product);
+			}
+		}
+		$cif_cop_final += round($aux_cop);
+	}
+
+	
+
+	$pdf->add_row([
+		['Transacción', $output_form['transaction_code'] .' - '. $output_form['transaction'], 60],
+		['Transporte', $output_form['transport'], 20],
+		['Núm. bultos', $output_form['packages_quantity'], 10, 'R'],
+		['Peso báscula', 'Peso entrada - Peso Salida', 10, 'R']
+	]);
+
+	$pdf->add_row([
+		['Bandera', $output_form['flag_id_4'] .' - '. $output_form['flag_name_4'], 25],
+		['País de destino', $output_form['flag_id_2'] .' - '. $output_form['flag_name_2'], 25],
+		['País de compra', $output_form['flag_id_1'] .' - '. $output_form['flag_name_1'], 25],
+		['País de procedencia', $output_form['flag_id_3'] .' - '. $output_form['flag_name_3'], 25],
+
+
+	]);
+
+	$cif_usd = $sum_fob+$sum_freights+$sum_insurance+$sum_other_expenses;
+	$cif_cop = $cif_cop_final;
+
+	// FOB TOTAL -------------------------------------------------------
+	$pdf->add_row([
+		['Total FOB - USD', '$ '.number_format($sum_fob, 2), 15, 'R'],
+		['Total fletes - USD', '$ '.number_format($sum_freights, 2), 15, 'R'],
+		['Total seguros - USD', '$ '.number_format($sum_insurance, 2), 15, 'R'],
+		['Otros gastos USD', '$ '.number_format($sum_other_expenses, 2), 15, 'R'],
+		['Total CIF USD', '$ '.number_format($cif_usd, 2), 15, 'R'],
+		['Total CIF COP', '$ '.number_format((round($cif_usd, 2) * $output_form['exchange_rate'])), 15, 'R'],
+		['TRM', '$ '.$output_form['exchange_rate'], 10, 'R'],
+	]);
+
+	// PRODUCTOS -------------------------------------------------------
+	$pdf->add_title('2. PRODUCTOS');
+
+	$count = 1;
+	$tariff_heading = 0;
+
+	foreach ($output_forms_products as $ifp) {
+		if ($count==1) {
+			$tariff_heading = $ifp['tariff_heading_id'];
+			$pdf->add_subtitle('Subpartida');
+
+			$pdf->add_row([
+				['Descripción', $ifp['tariff_heading'], 85],
+				['Unidad', $ifp['tariff_heading_unit'], 15, 'R'],
+			]);
+
+			$pdf->add_row([
+					['Producto', $ifp['product'], 25],
+					['Tipo', $ifp['product_type'], 10],
+					['Embalaje', $ifp['packing'], 10],
+					['País de Origen', $ifp['flag_id'].' - '.$ifp['flag'], 10],
+					['Peso bruto', number_format($ifp['gross_weight'], 2), 10, 'R'],
+					['Peso neto', number_format($ifp['net_weight'], 2), 10, 'R'],
+					['Valor FOB', '$ '.number_format($ifp['fob_value'], 2), 15, 'R'],
+					['Cantidad', number_format($ifp['quantity'], 2).' '.$ifp['unit_symbol'], 10, 'R']
+				]);
+		}else{
+			if ($tariff_heading!=$ifp['tariff_heading_id']) {
+				$tariff_heading = $ifp['tariff_heading_id'];
+				$pdf->add_subtitle('Subpartida');
+
+				$pdf->add_row([
+					['Descripción', $ifp['tariff_heading'], 85],
+					['Unidad', $ifp['tariff_heading_unit'], 15, 'R'],
+				]);
+
+				$pdf->add_row([
+						['Producto', $ifp['product'], 25],
+						['Tipo', $ifp['product_type'], 10],
+						['Embalaje', $ifp['packing'], 10],
+						['Pais de origen', $ifp['flag_id'].' - '.$ifp['flag'], 10],
+						['Peso bruto', number_format($ifp['gross_weight'], 2), 10, 'R'],
+						['Peso neto', number_format($ifp['net_weight'], 2), 10, 'R'],
+						['Valor FOB', '$ '.number_format($ifp['fob_value'], 2), 15, 'R'],
+						['Cantidad', number_format($ifp['quantity'], 2).' '.$ifp['unit_symbol'], 10, 'R']
+					]);
+			}else{
+				$pdf->add_collapse_row([
+					['Producto', $ifp['product'], 25],
+					['Tipo', $ifp['product_type'], 10],
+					['Embalaje', $ifp['packing'], 10],
+					['Pais de origen', $ifp['flag_id'].' - '.$ifp['flag'], 10],
+					['Peso bruto', number_format($ifp['gross_weight'], 2), 10, 'R'],
+					['Peso neto', number_format($ifp['net_weight'], 2), 10, 'R'],
+					['Valor FOB', '$ '.number_format($ifp['fob_value'], 2), 15, 'R'],
+					['Cantidad', number_format($ifp['quantity'], 2).' '.$ifp['unit_symbol'], 10, 'R']
+				]);
+			}
+		}
+		$count++;
+	}
+
+	// SOPORTES --------------------------------------------------------
+	$pdf->add_title('3. SOPORTES');
+
+	$count = 1;
+	foreach ($output_forms_supports as $supp) {
+		if ($count == 1) {
+			$pdf->add_row([
+				['ID', $supp['supp_id'], 10, 'R'],
+				['Tipo', $supp['support_type'], 20],
+				['Fecha', $supp['created_at'], 20],
+				['Detalle', $supp['details'], 50],
+			]);
+		}else{
+			$pdf->add_collapse_row([
+				['ID', $supp['supp_id'], 10, 'R'],
+				['Tipo', $supp['support_type'], 20],
+				['Fecha', $supp['created_at'], 20],
+				['Detalle', $supp['details'], 50],
+			]);
+		}
+		$count++;
+	}
+
+	// AJUSTES --------------------------------------------------------
+	$pdf->add_title('4. AJUSTES');
+
+	$count = 1;
+	foreach ($forms_adjustments as $adjust) {
+		if ($count == 1) {
+			$pdf->add_row([
+				['Campo', variable_to_name($adjust['field_name']), 20],
+				['Valor Anterior', $adjust['old_value'], 20],
+				['Nuevo Valor', $adjust['new_value'], 20],
+				['Ajustado por', $adjust['created_by'], 20],
+				['Ajustado el', $adjust['created_at'], 20],
+			]);
+		}else{
+			$pdf->add_collapse_row([
+				['Campo', variable_to_name($adjust['field_name']), 20],
+				['Valor Anterior', $adjust['old_value'], 20],
+				['Nuevo Valor', $adjust['new_value'], 20],
+				['Ajustado por', $adjust['created_by'], 20],
+				['Ajustado el', $adjust['created_at'], 20],
+			]);
+		}
+		$count++;
+	}
+
+	// OBSERVACIONES ---------------------------------------------------
+	$pdf->add_title('5. OBSERVACIONES');
+	$pdf->add_row([
+		['Observaciones', $output_form['observations'], 100],
+	]);
+
+	// FIRMAS ----------------------------------------------------------
+	$pdf->add_row([
+		['Firmas', '
+		El usuario calificado declara, bajo gravedad de juramento, que toda la información suministrada en este formuario es veraz. Se le autoriza al Ministerio de Comercio Exterior, utilizar la información contenida en este formulario con fines estadísticos.
+		', 50, 'C'],
+		['Firma del usuario operador', '', 25],
+		['Firma del usuario calificado', '', 25],
+	]);
+
+	if ($output_form['approved_by_user']!='') {
+		$pdf->Image(BASE_URL.'public/resources/users_signs/'.$output_form['approved_by_user'].'.png', $pdf->GetX() + 97, $pdf->GetY() - 18, 36);
+		$pdf->Image(BASE_URL.'public/resources/users_signs/'.$output_form['created_by_user'].'.png', $pdf->GetX() + 147, $pdf->GetY() - 18, 36);
+	}
+
+	$pdf->Output();

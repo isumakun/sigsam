@@ -1,0 +1,196 @@
+#container {
+  height: 350px;
+  width: 700px;
+}
+
+.highcharts-figure, .highcharts-data-table table {
+  min-width: 320px; 
+  max-width: 800px;
+  margin: 1em auto;
+}
+
+.highcharts-data-table table {
+  font-family: Verdana, sans-serif;
+  border-collapse: collapse;
+  border: 1px solid #EBEBEB;
+  margin: 10px auto;
+  text-align: center;
+  width: 100%;
+  max-width: 500px;
+}
+.highcharts-data-table caption {
+  padding: 1em 0;
+  font-size: 1.2em;
+  color: #555;
+}
+.highcharts-data-table th {
+	font-weight: 600;
+  padding: 0.5em;
+}
+.highcharts-data-table td, .highcharts-data-table th, .highcharts-data-table caption {
+  padding: 0.5em;
+}
+.highcharts-data-table thead tr, .highcharts-data-table tr:nth-child(even) {
+  background: #f8f8f8;
+}
+.highcharts-data-table tr:hover {
+  background: #f1f7ff;
+}
+.tabs {
+  position: relative;
+  margin: 40px auto;
+  width: 95%;
+}
+
+.tabs input {
+  position: absolute;
+  z-index: 1000;
+  width: 120px;
+  height: 40px;
+  left: 0px;
+  top: 0px;
+  opacity: 0;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    filter: alpha(opacity=0);
+  cursor: pointer;
+}
+.tabs input#tab-2{
+  left: 120px;
+}
+.tabs input#tab-3{
+  left: 240px;
+}
+.tabs input#tab-4{
+  left: 360px;
+}
+
+.tabs label {
+  background: #A8DBEA;
+/*  background: -moz-linear-gradient(top, #57A5BB 0%, #A8DBEA 100%);
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#57A5BB), color-stop(100%,#A8DBEA));
+  background: -webkit-linear-gradient(top, #57A5BB 0%,#A8DBEA 100%);
+  background: -o-linear-gradient(top, #57A5BB 0%,#A8DBEA 100%);
+  background: -ms-linear-gradient(top, #57A5BB 0%,#A8DBEA 100%);
+  background: linear-gradient(top, #57A5BB 0%,#A8DBEA 100%);*/
+  font-size: 15px;
+  line-height: 40px;
+  height: 40px;
+  position: relative;
+  float: left;
+  display: block;
+  width: 120px;
+  color: #385c5b;
+  top: 0px;
+  text-align: center;
+  text-shadow: 1px 1px 1px rgba(255,255,255,0.3);
+    border-radius: 3px 3px 0 0;
+    box-shadow: 2px 0 2px rgba(0,0,0,0.1), -2px 0 2px rgba(0,0,0,0.1);
+}
+
+.tabs label:after {
+    content: '';
+  background: #fff;
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  display: block;
+}
+
+.tabs input:hover + label {
+  background: #A8DBEA;
+  top: -8px;
+  -webkit-transition: top linear 0.2s;
+    -moz-transition: top linear 0.2s;
+    -o-transition: top linear 0.2s;
+    -ms-transition: top linear 0.2s;
+    transition: top linear 0.2s;
+}
+.tabs input:hover + label:after{
+  background: #A8DBEA;
+}
+.tabs input:hover + label ~ .clear-shadow {
+    top: -8px;
+  -webkit-transition: top linear 0.2s;
+    -moz-transition: top linear 0.2s;
+    -o-transition: top linear 0.2s;
+    -ms-transition: top linear 0.2s;
+    transition: top linear 0.2s;
+}
+
+.tabs input:checked:hover + label {
+    top: 0;
+}
+.tabs input:checked:hover + label:after{
+  background: #fff;
+}
+.tabs input:checked:hover + label ~ .clear-shadow {
+    top: 0;
+  background: #fff;
+  -webkit-transition: none;
+  -moz-transition: none;
+  -o-transition: none;
+  -ms-transition: none;
+  transition: none;
+}
+
+.tabs input.tab-selector-1:hover + label.tab-label-1 ~ .clear-shadow{
+    z-index: 3;
+}
+
+.tabs input.tab-selector-2:hover + label.tab-label-2 ~ .clear-shadow {
+    z-index: 2;
+}
+
+.tabs input.tab-selector-3:hover + label.tab-label-3 ~ .clear-shadow {
+    z-index: 1;
+}
+
+.tabs input.tab-selector-4:hover + label.tab-label-4 ~ .clear-shadow {
+    z-index: 0;
+}
+.tabs label:first-of-type {
+    z-index: 4;
+    box-shadow: 2px 0 2px rgba(0,0,0,0.1);
+}
+
+.tab-label-2 {
+    z-index: 3;
+}
+
+.tab-label-3 {
+    z-index: 2;
+}
+
+.tab-label-4 {
+    z-index: 1;
+}
+
+.tabs input:checked + label {
+    background: #fff;
+  z-index: 6;
+  -webkit-transition: top linear 0.2s;
+    -moz-transition: top linear 0.2s;
+    -o-transition: top linear 0.2s;
+    -ms-transition: top linear 0.2s;
+    transition: top linear 0.2s;
+}
+
+.clear-shadow {
+    background: #A8DBEA;
+  position: relative;
+  top: 0;
+    height: 10px;
+  margin-bottom: -10px;
+    clear: both;
+  z-index: -2;
+    box-shadow: 0 -2px 3px -2px rgba(0,0,0,0.2);
+    border-radius: 3px;
+}
+#analisis_modal .row{
+    margin-left: 0px;
+  }
+  #analisis_modal div {
+    width: 100%;
+  }

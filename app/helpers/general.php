@@ -91,3 +91,62 @@ function variable_to_name($variable){
 function esc_commas($value){
 	return str_replace(",",".",$value);
 }
+
+function upload_to_bucket($posted_file, $folder, $filename){
+	
+	if ($posted_file['size'] == 0 OR !isset($posted_file) OR !$posted_file)
+	{
+		\JJ\Flash::instance()->set_message('No se encontró ningún archivo para adjuntar', 'error');
+		return FALSE;
+	}
+
+	$dir = "/var/www/html/indicator/public/uploads/";
+	if($folder!=""){
+		$dir = "/var/www/html/indicator/public/uploads/$folder";
+		$folder = $folder.'/';
+	}
+
+	//echo '<pre>'.print_r($filename, TRUE).'</pre>';
+
+	/* echo '<pre>'.print_r($dir, TRUE).'</pre>';
+	echo '<pre>'.print_r($filename, TRUE).'</pre>';
+	echo '<pre>'.print_r($posted_file, TRUE).'</pre>';
+	echo '<pre>'.print_r("{$dir}{$filename}", TRUE).'</pre>'; */
+	
+	 /* Verifico si YA existen para eliminarlos */
+	$files = glob($dir.$filename);
+	if (count($files) > 0)
+	{
+		foreach ($files AS $file)
+		{
+			unlink($file);
+		}
+	}
+
+	if(move_uploaded_file($posted_file['tmp_name'], "{$dir}{$filename}")){
+		//echo "ok";
+	}
+	
+	chmod("{$dir}{$filename}", 0777);
+	chown("{$dir}{$filename}", "devops");
+	exec("chgrp -R devops {$dir}{$filename}");
+	
+	// Acá hago el PUT
+	exec("s3cmd -c /home/dl21hex/.s3cfg put {$dir}{$filename} s3://nx001/indicator/{$folder}{$filename}", $output, $return);
+
+	// Return will return non-zero upon an error
+	if (!$return) {
+		return TRUE;
+	}
+
+	
+	//echo '<pre>'.print_r("s3cmd -c /home/dl21hex/.s3cfg put {$dir}{$filename} s3://nx001/indicator/{$folder}{$filename}", TRUE).'</pre>'; 
+	
+	// Acá debo intentar eliminarlo sin validar nada...
+	//exec("s3cmd -c /home/dl21hex/.s3cfg del s3://nx001/{$folder}{$filename}");
+
+	
+	unlink("{$dir}{$filename}");
+
+	return FALSE;
+}

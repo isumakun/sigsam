@@ -2,6 +2,10 @@
 $calendar = new Calendar();
 ?>
 <style type="text/css">
+	textarea.select2-search__field{
+		/* display:none; */
+    position: absolute;
+	}
   .pdd_20{
     padding-top: 20px;
   }
@@ -9,6 +13,9 @@ $calendar = new Calendar();
     border: none;
     text-align-last: center;
   }
+span.select2{
+	width: inherit !important;
+}
 </style>
 <h2> Registro</h2>
 <form method="POST" enctype="multipart/form-data">

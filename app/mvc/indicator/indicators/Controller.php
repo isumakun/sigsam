@@ -51,15 +51,9 @@ Class Controller extends ControllerBase {
 			$data['graph'] = $this->model('indicator/values')->get_graph_filter($_GET['id'], date("Y-m-d"));
 			$data['page_title'] = 'Reporte Grafico';
 			preg_match(
-<<<<<<< HEAD
-			    '/[0-9]\d*(\.\d+)?/',
-			    $data['analysis'][0]['goal'],
-			    $matches
-=======
 				'/[0-9]\d*(\.\d+)?/',
 				$data['analysis'][0]['goal'],
 				$matches
->>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
 			);
 			$data['upper_l'] = null;
 			$data['gl2'] = null;
@@ -73,17 +67,6 @@ Class Controller extends ControllerBase {
 			}
 			if(isset($data['analysis'][0]['lower_limit']) && $data['analysis'][0]['lower_limit'] !=""  && isset($data['analysis'][0]['upper_limit']) && $data['analysis'][0]['upper_limit'] !=""){
 				preg_match(
-<<<<<<< HEAD
-				    '/[0-9]\d*(\.\d+)?/',
-				    $data['analysis'][0]['lower_limit'],
-				    $matches
-				);
-				$data['lower_l'] =  str_replace(',', '.', $matches[0]) ;
-				preg_match(
-				    '/[0-9]\d*(\.\d+)?/',
-				    $data['analysis'][0]['upper_limit'],
-				    $matches
-=======
 					'/[0-9]\d*(\.\d+)?/',
 					$data['analysis'][0]['lower_limit'],
 					$matches
@@ -93,7 +76,6 @@ Class Controller extends ControllerBase {
 					'/[0-9]\d*(\.\d+)?/',
 					$data['analysis'][0]['upper_limit'],
 					$matches
->>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
 				);
 				$data['upper_l'] =  str_replace(',', '.', $matches[0]) ;
 				$data['gl1'] = "Linf";
@@ -143,15 +125,6 @@ Class Controller extends ControllerBase {
 		if($_POST){
 			if($_POST['frequency_id'] == '1'){
 				$data['graph'] = $this->model('indicator/values')->get_graph($_POST['id'], $_POST['age_id']."-01-01");
-<<<<<<< HEAD
-				echo json_encode($data);
-				die;
-			}else{
-				$data['graph'] = $this->model('indicator/values')->get_graph_filter($_POST['id'], $_POST['age_id']."-01-01");
-				echo json_encode($data);
-				die;
-			}
-=======
 			}else{
 				$data['graph'] = $this->model('indicator/values')->get_graph_filter($_POST['id'], $_POST['age_id']."-01-01");
 			}
@@ -188,7 +161,6 @@ Class Controller extends ControllerBase {
 				$data['gl2'] = "Lsup";
 			}
 			echo json_encode($data);
->>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
 			
 		}
 	}
@@ -314,9 +286,27 @@ public function report_search(){
 	public function create(){
 		if ($_POST){
 			if($_POST['metakind'] !== html_entity_decode("=")){
-				$_POST['goal'] = $_POST['metakind'].' '.$_POST['goal'];
+				$newmethod = $_POST['metakind'].' '.$_POST['goal'];
 			}
 			if ($id_indicator = $this->model('indicator/indicators')->create($_POST)){
+				if($_POST['opc'] == 1){
+					$_POST['goal'] = null;
+				}
+				if($_POST['opc'] == 2){
+					$_POST['upper_limit'] = null;
+					$_POST['lower_limit'] = null;
+	
+					if($_POST['metakind'] !== html_entity_decode("=")){
+						$goal_toinsert = $_POST['metakind'].' '.$_POST['goal'];
+					}
+				}
+				if($_POST['goal'] != "" && $_POST['goal'] != null){
+					$id_goal_inserted = $this->model('indicator/indicators')->insert_in_indicator_goals($id_indicator, $goal_toinsert, $_POST['upper_limit'], $_POST['lower_limit']);	
+				}
+				if($_POST['upper_limit'] != "" && $_POST['lower_limit'] != "" && $_POST['upper_limit'] != null  && $_POST['lower_limit'] != null){
+					$id_goal_inserted = $this->model('indicator/indicators')->insert_in_indicator_goals($id_indicator, $goal_toinsert, $_POST['upper_limit'], $_POST['lower_limit']);	
+				}
+
 				$this->model('indicator/indicators')->delete_in_charge_indicator($id_indicator, $_POST['charge_id']);
 				$this->model('indicator/indicators')->insert_in_charge_indicator($id_indicator, $_POST['charge_id']);
 				set_notification("Registro creado correctamente", 'success', TRUE);
@@ -378,10 +368,7 @@ public function edit_indicator_goals(){
 		}
 
 		if ($_POST){
-<<<<<<< HEAD
-=======
 			
->>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
 			if($_POST['opc'] == 1){
 				$_POST['goal'] = null;
 			}
@@ -390,11 +377,6 @@ public function edit_indicator_goals(){
 				$_POST['lower_limit'] = null;
 
 				if($_POST['metakind'] !== html_entity_decode("=")){
-<<<<<<< HEAD
-					$_POST['goal'] = $_POST['metakind'].' '.$_POST['goal'];
-				}
-			}
-=======
 					$goal_toinsert = $_POST['metakind'].' '.$_POST['goal'];
 				}
 			}
@@ -404,7 +386,6 @@ public function edit_indicator_goals(){
 			if($_POST['upper_limit'] != "" && $_POST['lower_limit'] != "" && $_POST['upper_limit'] != null  && $_POST['lower_limit'] != null){
 				$id_goal_inserted = $this->model('indicator/indicators')->insert_in_indicator_goals($_GET['id'], $goal_toinsert, $_POST['upper_limit'], $_POST['lower_limit']);	
 			}
->>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
 			
 			if ($this->model('indicator/indicators')->update_by_id($_GET['id'], $_POST))
 			{
@@ -417,25 +398,9 @@ public function edit_indicator_goals(){
 			{
 				set_notification("El registro no pudo ser actualizado", 'error');
 			}
-<<<<<<< HEAD
-		}
-		preg_match(
-		    '/[0-9]\d*(\.\d+)?/',
-		    $data['indicator'][0]['goal'],
-		    $matches
-		);
-		$data['matches_goal'] = null;
-		$data['gl1'] = 0;
-		if(isset($matches[0])){$data['matches_goal'] = $matches[0];}else{$data['matches_goal'] = $data['indicator'][0]['goal'];}
-		if(isset($data['indicator'][0]['lower_limit']) && $data['indicator'][0]['lower_limit'] !=""  && isset($data['indicator'][0]['upper_limit']) && $data['indicator'][0]['upper_limit'] !=""){
-			$data['gl1'] = 1;
-		}
-		
-=======
 		}
 		
 		
->>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
 		$data['types'] = $this->model('indicator/types')->get_all();
 		$data['process'] = $this->model('indicator/processes')->get_all($_SESSION['user']['company_id']);
 		$data['charges'] = $this->model('indicator/charges')->get_all($_SESSION['user']['company_id']);

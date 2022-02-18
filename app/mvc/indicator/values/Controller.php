@@ -16,20 +16,19 @@ Class Controller extends ControllerBase {
 /*------------------------------------------------------------------------------
 	CREATE
 	------------------------------------------------------------------------------*/
-	public function create(){
+	public function create()
+	{
 		
 		if ($_POST)
 		{
 			$_POST['created_by'] = $_SESSION['user']['id'];
 			$extension = '';
-			// if ($_FILES) {
+			// if ($_FILES){
 
 				// if($_FILES['file_upload']['size'] > 500000)
 				// {
 				// 	redirect_back('El archivo excede la capacidad máxima permitida (50 mb)', 'error');
 				// }
-
-				// die();
 
 				// $extension = explode('.', $_FILES['support']['name']);
 
@@ -40,29 +39,21 @@ Class Controller extends ControllerBase {
 				// $_POST['file_extension1'] = $extension1;
 
 			// }
-			
-			if (!empty($_FILES['support']['size'])) {
+
+			if ($_FILES['support']['size']!=0) {
 				$prefix1 = rand(1, 10000);
-<<<<<<< HEAD
-				$dir1 = "./public/uploads/".$prefix1.'_'. $_FILES['support']['name'];
-=======
-				$dir1 = $_SERVER['DOCUMENT_ROOT']."/indicator/public/uploads/".$prefix1.'_'. $_FILES['support']['name'];
-				echo $dir1;
->>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
+				$dir1 = "/public/uploads/".$prefix1.'_'. $_FILES['support']['name'];
 				$_POST['support'] = $dir1;
-				// die($_SERVER['DOCUMENT_ROOT']);
-				move_uploaded_file($_FILES['support']['tmp_name'], $dir1);
-				// die('is here');
+				upload_to_bucket($_FILES['support'], '', $prefix1.'_'. $_FILES['support']['name']);
 			}
-			if (!empty($_FILES['support1']['size'])) {
+			
+			if ($_FILES['support1']['size']!=0) {
 				$prefix2 = rand(1, 10000);
 				$dir2 = "/public/uploads/".$prefix2.'_'. $_FILES['support1']['name'];
 				$_POST['support1'] = $dir2;
-				move_uploaded_file($_FILES['support1']['tmp_name'], $dir2);
-			}
+				upload_to_bucket($_FILES['support1'], '', $prefix2.'_'. $_FILES['support1']['name']);
+			}		
 			
-			// echo '<pre>'.print_r($_FILES['support']).'</pre>';
-			// die();
 			if ($id_inform = $this->model('indicator/values')->create($_POST)){
 				
 				set_notification("Registro creado correctamente", 'success', TRUE);
@@ -70,8 +61,6 @@ Class Controller extends ControllerBase {
 			}else{
 				set_notification("El registro no pudo ser creado", 'error');
 			}
-
-			
 			
 			if($_POST['final_report'] == 1){
 				$this->model('indicator/values')->create_final_report($_POST);
@@ -112,7 +101,7 @@ Class Controller extends ControllerBase {
 			}
 		
 		// Datos de la cuenta de correo utilizada para enviar vía SMTP
-		$smtpHost = "mail.daabon.com.co";  // Dominio alternativo brindado en el email de alta 
+		$smtpHost = "smtp.office365.com";  // Dominio alternativo brindado en el email de alta 
 		$smtpUsuario = "master@daabon.com.co";  // Mi cuenta de correo
 		$smtpClave = "D@@b0n.0rg@n1c";  // Mi contraseña
 
@@ -125,7 +114,7 @@ Class Controller extends ControllerBase {
 		$mail->Port       = 587;
 
 		// VALORES A MODIFICAR //
-		$mail->Host = "mail.daabon.com.co"; 
+		$mail->Host = "smtp.office365.com"; 
 		$mail->Username = "master@daabon.com.co"; 
 		$mail->Password = "D@@b0n.0rg@n1c";
 		$mail->IsHTML(true); // El correo se envía como HTML
@@ -163,7 +152,7 @@ Class Controller extends ControllerBase {
 		// 		'allow_self_signed' => true
 		// 	)
 		// );
-		// $sendstate = $mail->Send();
+		$sendstate = $mail->Send();
 		$mail->clearAllRecipients();
 
 		// $id=$_GET['id'];
@@ -198,7 +187,7 @@ Class Controller extends ControllerBase {
 
 		if ($_POST){
 
-			if ($_FILES){
+			// if ($_FILES){
 
 				$row_to_update = $this->model('indicator/values')->obtain_row($_GET['id']);
 
@@ -207,48 +196,19 @@ Class Controller extends ControllerBase {
 					redirect_back('El archivo excede la capacidad máxima permitida (50 mb)', 'error');
 				}
 				$path = getcwd();
+				
 				if ($_FILES['support']['size']!=0) {
 					$prefix1 = rand(1, 10000);
 					$dir1 = "/public/uploads/".$prefix1.'_'.$_FILES['support']['name'];
 					$_POST['support'] = $dir1;
-					move_uploaded_file($_FILES['support']['tmp_name'], $dir1);
-					
-					if($row_to_update[0]['support'] != ''){
-
-						$file_to_delete = $path.substr($row_to_update[0]['support'], 1);
-						$file_to_delete2 = $path."/public/uploads/".$_GET['id'].".".end(explode('.',$row_to_update[0]['support']));
-
-						if(file_exists($file_to_delete)){
-							unlink($file_to_delete);
-						}
-
-						// if(file_exists($file_to_delete2)){
-						// 	unlink($file_to_delete2);
-						// }
-						
-					}
-
+					upload_to_bucket($_FILES['support'], '', $prefix1.'_'. $_FILES['support']['name']);
 				}
+
 				if ($_FILES['support1']['size']!=0) {
 					$prefix2 = rand(1, 10000);
 					$dir2 = "/public/uploads/".$prefix2.'_'. $_FILES['support1']['name'];
 					$_POST['support1'] = $dir2;
-					move_uploaded_file($_FILES['support1']['tmp_name'], $dir2);
-
-					if($row_to_update[0]['support1'] != ''){
-						
-						$file_to_delete = $path.substr($row_to_update[0]['support1'], 1);
-						$file_to_delete2 = $path."/public/uploads/".$_GET['id'].".".end(explode('.',$row_to_update[0]['support']));
-
-						if(file_exists($file_to_delete)){
-							unlink($file_to_delete);
-						}
-
-						// if(file_exists($file_to_delete2)){
-						// 	unlink($file_to_delete2);
-						// }
-						
-					}
+					upload_to_bucket($_FILES['support1'], '', $prefix2.'_'. $_FILES['support1']['name']);
 				}
 			
 			
@@ -259,7 +219,8 @@ Class Controller extends ControllerBase {
 										
 				}
 			
-			}
+			// }
+
 		}
 			
 		

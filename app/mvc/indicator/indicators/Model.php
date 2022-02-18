@@ -70,10 +70,6 @@ public function change_visibility_indicator_goals($id, $visibility){
 	GET ALL
 ------------------------------------------------------------------------------*/
 public function get_all(){
-<<<<<<< HEAD
-
-=======
->>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
 	$sql = "
 
 		SELECT		i.id,
@@ -529,6 +525,8 @@ public function get_all_goals_indicator($id){
 
 		return $this->db->query($sql);
 	}
+
+	
 /*------------------------------------------------------------------------------
 	delete_in_charge_indicator
 ------------------------------------------------------------------------------*/

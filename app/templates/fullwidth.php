@@ -15,7 +15,7 @@ defined('UMVC') OR exit('No direct script access allowed'); ?>
 	<link href="<?=BASE_URL?>public/assets/css/umvc002.css" rel="stylesheet">
 	<link href="<?=BASE_URL?>public/assets/css/project.css" rel="stylesheet">
 	<link href="<?=BASE_URL?>public/assets/images/dhr.png" rel="shortcut icon" type="image/png">
-	<link href="<?=BASE_URL.'public/vendors/select2-4.0.3/dist/css/select2.css'?>" rel="stylesheet">
+	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 	<link rel="stylesheet" href="<?=BASE_URL?>public/assets/css/fontawesome/css/all.css">
 
 	<!-- ADMIN CSS -->
@@ -60,7 +60,7 @@ defined('UMVC') OR exit('No direct script access allowed'); ?>
 <script src="<?=BASE_URL?>public/assets/admin/vendors/pace-progress/js/pace.min.js"></script>
 <script src="<?=BASE_URL?>public/assets/admin/vendors/perfect-scrollbar/js/perfect-scrollbar.min.js"></script>
 <script src="<?=BASE_URL?>public/assets/admin/vendors/coreui/coreui-pro/js/coreui.min.js"></script>
-<script src="<?=BASE_URL.'public/vendors/select2-4.0.3/dist/js/select2.min.js'?>"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <?php require 'main_scripts.php' ?>
 <?php

@@ -2,12 +2,10 @@
 $calendar = new Calendar();
 ?>
 <style type="text/css">
-<<<<<<< HEAD
-=======
 	textarea.select2-search__field{
-		display:none;
+		/* display:none; */
+		position:absolute;
 	}
->>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
   .pdd_20{
     padding-top: 20px;
   }
@@ -15,8 +13,6 @@ $calendar = new Calendar();
     border: none;
     text-align-last: center;
   }
-<<<<<<< HEAD
-=======
 span.select2{
 	width: inherit !important;
 }
@@ -229,26 +225,10 @@ span.select2{
 .button-9:focus{
 	outline: 2px solid #c77a7a;
 }
->>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
 </style>
 <h2>Editar Registro:</h2>
 <form method="POST" enctype="multipart/form-data" name="theForm" id="theForm">
 
-<<<<<<< HEAD
-	</div>
-	<div class="row marginb">
-		<div class="col-md-6 indi">
-			<div class="form-group" id="opciones" >
-				<table>
-					<label for="">Opciones:</label>
-					<th>
-						<input type="radio" checked name="opc" value="2" id="input_2" data-value="2" style="appearance: auto; margin-bottom: 0;" <?= (!$gl1)? 'checked' : '' ?> >Meta
-					</th>
-					<th>
-						<input type="radio" name="opc" value="1" id="input_1" data-value="1" style="appearance: auto;margin-bottom: 0;" <?= ($gl1)?  'checked' : '' ?> >Limites
-					</th>
-				</table>
-=======
 	<div class="tabs">
 	  <input class="radio_tabs" type="radio" name="tabs" id="tabone" checked="checked">
 	  <label for="tabone" class="diferentiate">Indicador</label>
@@ -263,7 +243,6 @@ span.select2{
 						<?php }   ?>
 					</select>
 				</div>
->>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
 			</div>
 			<div class="row">
 				<div class="col-md-12 marginb">
@@ -325,24 +304,6 @@ span.select2{
 					<input name="unit" value="<?=$indicator[0]['unit']?>" type="text"/>
 				</div>
 			</div>
-<<<<<<< HEAD
-			<div class="form-group" id="goal1" style="display:none;">
-				<div class="row">
-		          <div class="col-md-6 pdd_20">
-		            <select name="metakind">
-		              <option>&#8805;</option>
-		              <option>&leq;</option>
-		              <option>&lt;</option>
-		              <option>&gt;</option>            
-		              <option>&equals;</option>
-		            </select>
-		          </div>
-		          <div class="col-md-6">
-					<label for="goal">Meta:</label>
-					<input name="goal" value="<?=$matches_goal?>" type="text"/>
-		          </div>
-		        </div>
-=======
 	  </div>
 	  
 	  <input class="radio_tabs" type="radio" name="tabs" id="tabtwo">
@@ -403,7 +364,6 @@ span.select2{
 				    </div>
 					</div>
 				</div>		
->>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
 			</div>
 			<hr>
 	  	<div class="row marginb">
@@ -515,25 +475,6 @@ span.select2{
 	var buttonLogGoals = null
 	var buttonEditGoals = null
 	$(document).ready(function(){
-<<<<<<< HEAD
-		var symbol_html = htmlEntityChecker('<?=$indicator[0]['goal']?>');
-		switch (symbol_html) {
-		  case 0:
-		    $('select[name="metakind"] option:nth-child(1)').attr("selected", true);
-		    break;
-		  case 1:
-		    $('select[name="metakind"] option:nth-child(2)').attr("selected", true);
-		    break;
-		  case 2:
-		     $('select[name="metakind"] option:nth-child(3)').attr("selected", true);
-		    break;
-		  case 3:
-		    $('select[name="metakind"] option:nth-child(4)').attr("selected", true);
-		    break;
-		  default:
-    		$('select[name="metakind"] option:nth-child(5)').attr("selected", true);
-		}
-=======
 		$(document).on('click', 'button.edit_goals', function(e){
 			e.preventDefault();
 			buttonEditGoals = $(this)
@@ -674,7 +615,6 @@ span.select2{
 
 
 		
->>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
 		$('.select2_custom').prop('required',true);
 		if( $('#input_2').prop('checked')){
 			document.getElementById("upper_limit1").style.display = "none";

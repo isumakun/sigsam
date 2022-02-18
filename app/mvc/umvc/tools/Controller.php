@@ -167,50 +167,6 @@ class Controller extends ControllerBase {
 		}
 	}
 
-
-/*----------------------------------------------------------------------
-	COMMAND
-	TEST:
-		http://localhost/dhr4/umvc/tools/command?cmd=e.85154472
-
-	TODO:
-		Trazabilidad a un producto -> tp
-		Trazabilidad a un FMM-I -> tfi
-		Trazabilidad a un FMM-S -> tfs
-
-----------------------------------------------------------------------*/
-	public function command()
-	{
-		if ($_POST)
-		{
-			$cmd = explode('.', $_POST['cmd']);
-
-			switch ($cmd[0])
-			{
-				// SALIDAS ---------------------------------------------
-				//	> Abrir
-				case 'i':
-					redirect("tbs/input_forms/details?id={$cmd[1]}");
-					break;
-
-				//	> Imprimir
-				case 'ii':
-					redirect("tbs/input_forms/printout?id={$cmd[1]}");
-					break;
-
-				// FMM - SALIDAS ---------------------------------------
-				//	> Abrir
-				case 's':
-					redirect("tbs/output_forms/details?id={$cmd[1]}");
-					break;
-
-				//	> Imprimir
-				case 'is':
-					redirect("tbs/output_forms/printout?id={$cmd[1]}");
-					break;
-			}
-		}
-
-		redirect_back('El comando ingresado no existe.', 'error');
-	}
 }
+
+?>

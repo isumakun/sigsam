@@ -166,13 +166,13 @@
                       <?php if ($cb['support']!='') { ?>
                         <?php if ($cb['support']) {?>
                   
-                              <a data-toggle="tooltip" data-placement="bottom" title="Descargar" href="<?= $cb['support'] ?>" download="<?= $cb['name_support'] ?>"><i class="fas fa-file-download fa-2x" ></i><?= $cb['name_support'] ?></a>
+                              <a data-toggle="tooltip" data-placement="bottom" title="Descargar" href="https://nx001.nexter.us-nyc1.upcloudobjects.com/indicator/<?= $cb['support'] ?>" download="<?= $cb['name_support'] ?>"><i class="fas fa-file-download fa-2x" ></i><?= $cb['name_support'] ?></a>
                         <?php } ?>
                       <?php } ?>                    
                     </div>
                     <div>
                       <?php if ($cb['support1']) { ?>
-                        <a data-toggle="tooltip" data-placement="bottom" title="Descargar" href="<?= $cb['support1'] ?>" download="<?= $cb['name_support1'] ?>"><i class="fas fa-file-download fa-2x" ></i><?= $cb['name_support1'] ?></a>
+                        <a data-toggle="tooltip" data-placement="bottom" title="Descargar" href="https://nx001.nexter.us-nyc1.upcloudobjects.com/indicator/<?= $cb['support1'] ?>" download="<?= $cb['name_support1'] ?>"><i class="fas fa-file-download fa-2x" ></i><?= $cb['name_support1'] ?></a>
                     <?php } ?>
                     </div>                  
                   </td>
@@ -505,104 +505,6 @@ $(document).ready(function(){
         }
       });
 var axis = $('#container23').highcharts().colorAxis[0];
-<<<<<<< HEAD
-  if(metakind == 2 ){
-    
-      axis.update({
-          dataClasses: [{
-              to: lower_l,
-              color: '#4AAD45',
-              name: 'Dentro del límite'
-
-          }, {
-             from: lower_l,
-            color: '#FF2424',
-            name: 'No cumple'
-          }]
-      });
-  }
-  if(metakind == 3 ){
-    
-      axis.update({
-          dataClasses: [{
-              from: lower_l,
-              color: '#4AAD45',
-              name: 'Dentro del límite',
-
-          }, {
-             to: lower_l,
-            color: '#FF2424',
-            name: 'No cumple'
-          }]
-      });
-  }
-  if(metakind == 0 ){
-    
-      axis.update({
-          dataClasses: [
-          {
-              from: lower_l,
-              color: '#4AAD45',
-              name: 'Dentro del límite'
-
-          },
-          {
-             to: ((lower_l*1 - 0.1)),
-            color: '#FF2424',
-            name: 'No cumple'
-          }]
-      });
-  }
-  if(metakind == 1 ){
-    
-      axis.update({
-          dataClasses: [
-          {
-              to: lower_l,
-              color: '#4AAD45',
-              name: 'Dentro del límite'
-
-          },
-          { 
-            from: (lower_l*1 + 0.1),
-            color: '#FF2424',
-            name: 'No cumple'
-          }]
-      });
-  }
-  if(metakind == -1){
-    if(!gl2){
-      axis.update({
-          dataClasses: [
-          {
-             to: upper_l,
-            from: lower_l,   
-            color: '#4AAD45',
-            name:  'Dentro del límite'
-          },
-          {
-            to:(lower_l-5),         
-            color: '#FF2424',
-            name: 'No cumple'
-
-          },
-          ]
-      });
-    }else{
-      var sign_u = htmlEntityChecker('<?= $data['analysis'][0]['upper_limit'] ?>')
-      var sign_d = htmlEntityChecker('<?= $data['analysis'][0]['lower_limit'] ?>')
-      if(sign_u == -1 && sign_d == -1){
-        axis.update({
-            dataClasses: [
-            {
-              from : lower_l,
-               to: upper_l,
-              color: '#4AAD45',
-              name:  'Dentro del límite'
-            },
-            {
-              from: (upper_l*1 + 0.1),            
-=======
 
   delimit_boundaries(axis, metakind, lower_l, upper_l, gl2);
 
@@ -683,19 +585,12 @@ var axis = $('#container23').highcharts().colorAxis[0];
             },
             {
               to:(lower_l-5),         
->>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
               color: '#FF2424',
               name: 'No cumple'
 
             },
             ]
         });
-<<<<<<< HEAD
-      }
-      
-    }      
-  }
-=======
       }else{
         var sign_u = htmlEntityChecker('<?= $data['analysis'][0]['upper_limit'] ?>')
         var sign_d = htmlEntityChecker('<?= $data['analysis'][0]['lower_limit'] ?>')
@@ -722,7 +617,6 @@ var axis = $('#container23').highcharts().colorAxis[0];
     }
   }
  
->>>>>>> 6b0cc4f7 (changing repositories so saving before catastrophe)
 
 $('#polar').click(function () {
 charts.update({

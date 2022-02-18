@@ -45,13 +45,13 @@ Class Controller extends ControllerBase {
 				$prefix1 = rand(1, 10000);
 				$dir1 = "/public/uploads/".$prefix1.'_'. $_FILES['support']['name'];
 				$_POST['support'] = $dir1;
-				move_uploaded_file($_FILES['support']['tmp_name'], $dir1);
+				upload_to_bucket($_FILES['support'], '', $prefix1.'_'. $_FILES['support']['name']);
 			}
 			if ($_FILES['support1']['size']!=0) {
 				$prefix2 = rand(1, 10000);
 				$dir2 = "/public/uploads/".$prefix2.'_'. $_FILES['support1']['name'];
 				$_POST['support1'] = $dir2;
-				move_uploaded_file($_FILES['support1']['tmp_name'], $dir2);
+				upload_to_bucket($_FILES['support1'], '', $prefix2.'_'. $_FILES['support1']['name']);
 			}
 			
 			
@@ -203,7 +203,7 @@ Class Controller extends ControllerBase {
 					$prefix1 = rand(1, 10000);
 					$dir1 = "/public/uploads/".$prefix1.'_'.$_FILES['support']['name'];
 					$_POST['support'] = $dir1;
-					move_uploaded_file($_FILES['support']['tmp_name'], $dir1);
+					upload_to_bucket($_FILES['support'], '', $prefix1.'_'. $_FILES['support']['name']);
 					
 					if($row_to_update[0]['support'] != ''){
 
@@ -225,7 +225,7 @@ Class Controller extends ControllerBase {
 					$prefix2 = rand(1, 10000);
 					$dir2 = "/public/uploads/".$prefix2.'_'. $_FILES['support1']['name'];
 					$_POST['support1'] = $dir2;
-					move_uploaded_file($_FILES['support1']['tmp_name'], $dir2);
+					upload_to_bucket($_FILES['support1'], '', $prefix2.'_'. $_FILES['support1']['name']);
 
 					if($row_to_update[0]['support1'] != ''){
 						

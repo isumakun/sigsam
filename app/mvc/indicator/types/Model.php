@@ -66,7 +66,8 @@ Class Model extends \ModelBase {
 /*------------------------------------------------------------------------------
 	DELETE BY ID
 ------------------------------------------------------------------------------*/
-	public function delete_by_id($id){
+	public function delete_by_id($id)
+	{
 		return $this->db->query("
 
 			DELETE

@@ -171,11 +171,11 @@ class Controller extends ControllerBase {
 				}
 				if (has_role(6)) {
 					//echo BASE_URL."tbs/dashboard/security";
-					header("Location: ".BASE_URL."tbs/dashboard/security");
+					header("Location: ".BASE_URL."indicator/dashboard/security");
 					die();
 				}else{
 					if (strpos($_SESSION['penultimate']['uri'], 'public') !== false) {
-					    header("Location: ".BASE_URL."tbs/dashboard");
+					    header("Location: ".BASE_URL."indicator/dashboard");
 					}else{
 						header("Location: {$_SESSION['penultimate']['uri']}");
 					}
@@ -200,17 +200,19 @@ class Controller extends ControllerBase {
 ----------------------------------------------------------------------*/
 	public function auto_login()
 	{
-		//error_reporting(E_ALL);
-		//ini_set('display_errors', TRUE);
-
+		
+		// error_reporting(E_ALL);
+		// ini_set('display_errors', TRUE);
+		// header('HTTP/1.1 302 Found');
 		session_name('sigsam');
-		$username = $_POST['username'];
 		if (empty($username)) {
 			$username = $_GET['username'];
 		}
+		
 		$user = $this->model('admin/users')->get_by_username($username);
-
+		
 		if ($user) {
+			
 			$_SESSION['last']['prefix']		= CURRENT_PREFIX;
 			$_SESSION['last']['controller']	= CURRENT_CONTROLLER;
 			$_SESSION['last']['method']		= CURRENT_METHOD;

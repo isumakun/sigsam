@@ -41,8 +41,9 @@
   <div id="change_company" class="modal">
   <form action="<?=BASE_URL?>indicator/users_companies/change_company" method="POST">
     <select name="company">
-      <?php foreach ($_SESSION['user']['companies'] as $company) { ?>
-        <option value=<?=$company['company_id']?>><?=$company['company']?></option>
+      <?php foreach ($_SESSION['user']['companies'] as $company) {
+        ?>
+        <option value="<?=$company['company_id']?>"><?=$company['company']?></option>
         <?php
       } ?>
     </select>

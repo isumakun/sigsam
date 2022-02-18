@@ -9,7 +9,6 @@ class Controller extends ControllerBase {
 	{
 		// $this->view('Inicio', $data, 'fullwidth');
 		$data['indicators'] = $this->model('indicator/indicators')->get_all($_SESSION['user']['company_id']);
-		
 		// if(has_role(2)|| has_role(3)){
 		// 	$data['indicators'] = $this->model('indicator/indicators')->getall_by_rol($_SESSION['user']['company_id']);
 		// }else{

@@ -179,7 +179,9 @@ public function get_test($ind_id, $year)
 		    ) AND v.indicator_id = $ind_id AND i.visibility = 1
 		ORDER BY
 		    p.id ASC";
-
+// if($ind_id == 288){
+// 	die($sql);
+// }
 	return $this->db->query($sql)->fetchAll();
 }
 /*------------------------------------------------------------------------------
@@ -751,8 +753,8 @@ public function update_by_id($id, $params)
 	// $params['value'] = str_replace(',','.',$params['value']);
 	// $params['analysis'] = str_replace(',','.',$params['analysis']);
 	// $params['analysis_end'] = str_replace(',','.',$params['analysis_end']);
-
-	$sql = "
+	if(!empty($params['period_id'])){
+		$sql = "
 
 		UPDATE		indicator_informs
 		SET			`value` =  COALESCE(NULLIF('{$params['value']}', ''), `value`),
@@ -766,8 +768,21 @@ public function update_by_id($id, $params)
 		WHERE		id = '$id'
 
 	";
+	}else{
+		$sql = "
 
+		UPDATE		indicator_informs
+		SET			`value` =  COALESCE(NULLIF('{$params['value']}', ''), `value`),
+					`inform` =  COALESCE(NULLIF('{$params['inform']}', ''), `inform`),
+					`support` = COALESCE(NULLIF('{$params['support']}', ''), `support`),
+					`support1` = COALESCE(NULLIF('{$params['support1']}', ''), `support1`),
+					`inform_type_id` = '{$params['inform_type']}',
+					`inform_class_id` = COALESCE(NULLIF('{$params['inform_class']}', ''), `inform_class_id`),
+					`age_id` = COALESCE(NULLIF('{$params['age_id']}', ''''), '{$params['period_id']}')
+		WHERE		id = '$id'
 
+	";
+	}
 	return $this->db->query($sql);
 }
 

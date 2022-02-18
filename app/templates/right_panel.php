@@ -6,7 +6,7 @@
 			</a>
 		</li>
 		<li class="nav-item">
-			<a href="<?=BASE_URL?>tbs/notifications" class="btn btn-default">Ver todas las notificaciones</a>
+			<a href="<?=BASE_URL?>indicator/notifications" class="btn btn-default">Ver todas las notificaciones</a>
 		</li>
 	</ul>
 

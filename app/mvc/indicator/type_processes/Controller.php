@@ -7,28 +7,11 @@ Class Controller extends ControllerBase {
 ------------------------------------------------------------------------------*/
 	public function index()
 	{
-		$data['processes'] = $this->model('indicator/processes')->get_all();
-		$data['types'] = $this->model('indicator/types')->get_all();
+		$data['type_processes'] = $this->model('indicator/type_processes')->get_all();
 
 		$this->view('', $data, 'fullwidth');
 	}
 
-	public function indicator_process(){
-		echo json_encode('asdasdasd');
-	}
-
-/*------------------------------------------------------------------------------
-	Json Data
-------------------------------------------------------------------------------*/
-	public function json_data()
-	{
-		if($_POST){
-			$josnuser = $this->model('indicator/type_processes')->get_all();
-
-			echo json_encode($josnuser,1);
-		}
-		
-	}
 /*------------------------------------------------------------------------------
 	CREATE
 ------------------------------------------------------------------------------*/

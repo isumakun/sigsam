@@ -20,7 +20,6 @@
 		$table->add_column('Value', 'value');
 		$table->add_column('created_by', 'created_by');
 		$table->add_column('created_at', 'created_at');
-		$table->add_column('Support', 'support');
 		$table->add_column_html('', 'id', 
 			'<div class="strech nowrap">
 			<a href="'.BASE_URL.'indicator/values/edit?id={row_id}" class="button edit"><span class="icon edit"></span></a>&nbsp;

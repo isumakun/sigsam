@@ -54,6 +54,7 @@ class Model extends \ModelBase {
 ----------------------------------------------------------------------*/
 	public function get_by_username($username)
 	{
+		
 		$sql = "
 
 			SELECT
@@ -209,28 +210,6 @@ class Model extends \ModelBase {
 		return $this->db->query($sql)->fetchAll()[0];
 	}
 
-/*----------------------------------------------------------------------
-	GET OPERATORS
-----------------------------------------------------------------------*/
-	public function get_operators()
-	{
-		return $this->db->query("
-
-			SELECT
-				u.*
-			FROM
-				tbs3.`admin_users` AS u
-
-			INNER JOIN tbs3.admin_users_roles AS ur
-				ON ur.user_id = u.id
-
-			INNER JOIN tbs3.tbs_employees AS e
-				ON e.user_id = u.id
-
-			WHERE ur.role_id <= 3
-
-		")->fetchAll();
-	}
 
 /*----------------------------------------------------------------------
 	GET USERS BY COMPANY

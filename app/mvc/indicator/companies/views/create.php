@@ -16,7 +16,7 @@ $calendar = new Calendar();
 					<div class="row marginb">
 						<div class="col-md-12">
 							<label for="name">Nombre:</label>
-							<input name="name" value="<?=$_POST['name']?>" type="text"/>
+							<input name="name" value="" type="text" required/>
 						</div>
 					</div>
 					<div class="row">

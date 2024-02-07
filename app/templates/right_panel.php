@@ -12,6 +12,7 @@
 
 	<div class="tab-content">
 		<div class="tab-pane active p-3" id="notification_panel" role="tabpanel">
+			<?php if(isset($_SESSION['panel_notifications'])){ ?> 
 			<?php foreach ($_SESSION['panel_notifications'] as $noti) {
 		            $date = new DateTime($noti['created_at']);
 		            $current_date = date('d/m/Y', time());
@@ -40,6 +41,7 @@
 
 		            <?php
 		          } ?>
+		          <?php }?>
 		</div>
 	</div>
 </aside>

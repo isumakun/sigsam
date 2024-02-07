@@ -67,7 +67,7 @@ function make_link_menu($uri, $content, $class = FALSE, $target = '_self')
 
 	$prefix		= $current_uri[0];
 	$controller	= $current_uri[1];
-	$method		= $current_uri[2];
+	$method		= (isset($current_uri[2])? $current_uri[2]: '');
 
 	if ($prefix		== '') $prefix		= 'dhr';
 	if ($controller	== '') $controller	= 'dashboard';
@@ -104,12 +104,12 @@ function has_privilege($prefix, $controller, $method = 'index')
 	// die();
 	// echo '<pre>'.print_r($_SESSION, TRUE).'</pre>'; die();
 	if (isset($_SESSION['user']['privileges'][$prefix][$controller][$method]) 
-		OR isset($_SESSION['user']['privileges'][$prefix][$controller]['*']) 
-		OR isset($_SESSION['user']['privileges'][$prefix]['*']['*']) 
-		OR isset($_SESSION['user']['privileges']['*']['*']['*']) 
-		OR $_SESSION['prefix']=='public' 
-		OR $_SESSION['last']['method'] == 'Auto_login'
-		OR $_SESSION['method'] == 'Auto_login'){
+		|| isset($_SESSION['user']['privileges'][$prefix][$controller]['*']) 
+		|| isset($_SESSION['user']['privileges'][$prefix]['*']['*']) 
+		|| isset($_SESSION['user']['privileges']['*']['*']['*']) 
+		|| $_SESSION['prefix']=='public' 
+		|| (isset($_SESSION['last']['method']) && $_SESSION['last']['method'] == 'Auto_login')
+		|| $_SESSION['method'] == 'Auto_login'){
 			
 			return TRUE;
 		}

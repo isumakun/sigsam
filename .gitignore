@@ -6,6 +6,6 @@
 public/uploads/
 app/mvc/indicator/mockups
 app/configurations
-core/bootstrap.php
+# core/bootstrap.php
 .fake
 .ionide

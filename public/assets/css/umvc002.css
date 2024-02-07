@@ -110,10 +110,10 @@ select:focus {
 	outline: 0;
 }
 label,legend {
-	/*display: block;*/
+	
 	
 	font-weight: 600;
-	/*width: 100%;	*/
+	
 }
 
 input[type="submit"] { clear: both; }
@@ -147,23 +147,19 @@ form input[type="button"] {
 
 .button, button, input[type="submit"], input[type="reset"], input[type="button"] {
     display: inline-block;
-     height: 38px; 
     padding: 0 30px;
     text-align: center;
     font-size: 0.8em;
-     font-weight: 600; 
-    letter-spacing: .1rem;
+    font-weight: 600;
     text-transform: uppercase;
     text-decoration: none;
     border-radius: 4px;
-     color: #FFF; 
-    background-color: #63c2de;
-    border-color: #63c2de;
     cursor: pointer;
-     height: 25px; 
-     padding: 0 5px; 
+    padding: 0 10px;
     font-size: 0.8em;
     line-height: 27px;
+    border: none;
+    height: 100%;
 }
 .square_button{
 		display: inline-block;
@@ -203,6 +199,7 @@ form input[type="button"] {
 .orange		{ color: #FFF; background-color: #e67e22 !important; }
 .dark 		{ color: #FFF; background-color: #34495e !important; }
 .gray 		{ color: #FFF; background-color: #B3BFC8 !important; }
+.bluePr 		{ color: #FFF; background-color: #279db2 !important; }
 .disabled	{ color: #F3F4F5; background-color: #bdc3c7; cursor: not-allowed; }
 
 .input {

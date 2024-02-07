@@ -1,4 +1,4 @@
-  <header class="app-header navbar">
+<header class="app-header navbar">
     <button class="navbar-toggler sidebar-toggler d-lg-none mr-auto" type="button" data-toggle="sidebar-show">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -37,18 +37,4 @@
       <span class="navbar-toggler-icon"></span>
     </button>
   </header>
-
-  <div id="change_company" class="modal">
-  <form action="<?=BASE_URL?>indicator/users_companies/change_company" method="POST">
-    <select name="company">
-      <?php foreach ($_SESSION['user']['companies'] as $company) {
-        ?>
-        <option value="<?=$company['company_id']?>"><?=$company['company']?></option>
-        <?php
-      } ?>
-    </select>
-    <input type="submit" value="Cambiar Empresa" class="button dark">
-  </form>
-</div>
-
   <?php require 'menu.php' ?>

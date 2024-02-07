@@ -1,23 +1,40 @@
 <?php 
 $calendar = new Calendar();
 ?>
-	<h2>Editar Proceso</h2>
-	<form method="POST" enctype="multipart/form-data">
-		
-		<label for="name">Nombre:</label>
-		<input name="name" value="<?=$process['name']?>" type="text"/>
+<div class="row">
+	<div class="col-md-12">
+		<div class="row">
+			<div class="col-md-12">
+				<h2>Editar Proceso</h2>
+			</div>
+		</div>
+		<hr>
+		<div class="row">
+			<div class="col-md-12">
+				<form method="POST" enctype="multipart/form-data">
+					<div class="row marginb">
+						<div class="col-md-6">
+							<label for="name">Nombre:</label>
+							<input name="name" value="<?=$process['name']?>" type="text" required/>
+						</div>
+						<div class="col-md-6">
+							<label for="type_process_id">Tipo de Proceso:</label>
+							<select name="type_process_id">
+								<?php foreach($type_processes AS $t){ ?>
+									<option value="<?=$t['id']?>" <?=($process['type_process_id'] == $t['id'] ? 'selected' : '')?>><?=$t['name']?></option>
+								<?php } ?>
+							</select>
+						</div>
+					</div>
+					<div class="row marginb">
+						<div class="col-md-12">
+							<input class="confirmp save blueDf" type="button" value="Guardar" />
+							<input style="display: none;" class="submit save" type="submit" value="Guardar"/>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 
-		<label for="type_process_id">Tipo de Proceso:</label>
-		<select name="type_process_id">
-<?php
-				foreach($type_processes AS $t)
-				{
-?>
-			<option value="<?=$t['id']?>" <?=($process['type_process_id'] == $t['id'] ? 'selected' : '')?>><?=$t['name']?></option>
-<?php
-				}
-?>
-		</select>
-
-		<input class="submit save" type="submit" value="Guardar" />
-	</form>

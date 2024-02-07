@@ -99,39 +99,59 @@
     padding-left: 15px !important;
   }
 </style>
-<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
 <script src="https://code.highcharts.com/highcharts.js"></script>
 <script src="https://code.highcharts.com/modules/coloraxis.js"></script>
 <script src="https://code.highcharts.com/highcharts-more.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-<link href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" rel="stylesheet" />
+<!-- <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script> -->
+<script src="https://cdn.datatables.net/buttons/1.6.1/js/dataTables.buttons.min.js" type="text/javascript">
+</script>
+<script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.flash.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js" type="text/javascript">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js" type="text/javascript">
+</script>
+<script src="https://cdn.datatables.net/buttons/1.6.1/js/buttons.html5.min.js" type="text/javascript"></script>
+<!-- <link href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" rel="stylesheet" /> -->
 <input type="text" id="frequency_id" name="frequency_id" value="<?= $indicators[0]['frequency_id'] ?>" style="display: none;">
-<div class="row" style="height: 500px;">
+<div class="row" style="height: 100%">
 	<div class="col-md-4">
-		<figure class="highcharts-figure" style="padding-top:40px">
-		    <div id="container23"></div>
+		<figure class="highcharts-figure" style="padding-top:40px; height: 90%;">
+		    <div id="container23" style="height: 100%;"></div>
         <center>
-        <button id="plain">Plana</button>
-        <button id="inverted">Invertida</button>
-        <button id="polar">Polar</button>
+          <button id="plain">Plana</button>
+          <button id="inverted">Invertida</button>
+          <button id="polar">Polar</button>
         </center>
         
 		</figure>
 	</div>
   
   
-<div class="col" style="overflow-y: auto; height: 480px;">
+<div class="col" style="overflow-y: auto; height: 100%;">
   <div class="col fixTableHead no_responsive custom_scroll" style="width: 100%; height: 100%;">
     <div class="col-md-12" style="margin: 15px 0;">
+    <div class="row">
+      <div class="col-md-4">
       <label for="age" style="display:inline-block; width: auto;">Año:    </label>
       <select name="age_id" id="age_id" style="width: 90%;">
       <?php foreach($ages AS $a) { ?>
         <option value="<?=$a['name']?>" <?=($indicators[0]['age_id'] == $a['id'] ? 'selected' : '')?>><?=$a['name']?></option>
            <?php  } ?>
       </select>
+      </div>
+      <div class="col-md-">
+      <label for="registers_type" style="display:inline-block; width: auto;">Registros:</label>
+      <select name="registers_type" id="registers_type" style="width: 90%;">
+        <option value="1" <?=($indicators[0]['inform_class_id'] == 1 ? 'selected' : '')?>>Peri&oacute;dicos</option>
+        <option value="3" <?=($indicators[0]['inform_class_id'] == 3 ? 'selected' : '')?>>Finales</option>
+        </select>
+      </div>
+    </div>
     </div>
     <div class="div_info_table">
       <table id="info_table">
@@ -155,7 +175,7 @@
                   <td><?=$cb['inform']?></td>
                   <td>
                     <?php if (has_role(1)) { ?>
-                      <div class="strech nowrap">
+                      <div class=" ">
                         <a href="../values/edit?id=<?=$cb['id']?>" class="button edit"><span class="icon edit"></span></a>&nbsp;
                         <a href="../values/delete?id=<?=$cb['id']?>" class="delete button "><span class="icon delete"></span></a>
                       </div>
@@ -163,16 +183,13 @@
                   </td>
                   <td >
                     <div>
-                      <?php if ($cb['support']!='') { ?>
-                        <?php if ($cb['support']) {?>
-                  
-                              <a data-toggle="tooltip" data-placement="bottom" title="Descargar" href="https://nx001.nexter.us-nyc1.upcloudobjects.com/indicator/<?= $cb['support'] ?>" download="<?= $cb['name_support'] ?>"><i class="fas fa-file-download fa-2x" ></i><?= $cb['name_support'] ?></a>
-                        <?php } ?>
+                      <?php if (!empty($cb['support'])) { ?>
+                              <a data-toggle="tooltip" data-placement="bottom" title="Descargar" href="<?=download_support($cb['name_support'])?>" download="<?= $cb['name_support'] ?>"><i class="fas fa-file-download fa-2x" ></i><?= $cb['name_support'] ?></a>
                       <?php } ?>                    
                     </div>
                     <div>
-                      <?php if ($cb['support1']) { ?>
-                        <a data-toggle="tooltip" data-placement="bottom" title="Descargar" href="https://nx001.nexter.us-nyc1.upcloudobjects.com/indicator/<?= $cb['support1'] ?>" download="<?= $cb['name_support1'] ?>"><i class="fas fa-file-download fa-2x" ></i><?= $cb['name_support1'] ?></a>
+                      <?php if (!empty($cb['support1'])) { ?>
+                        <a data-toggle="tooltip" data-placement="bottom" title="Descargar" href="<?=download_support($cb['name_support1'])?>" download="<?= $cb['name_support1'] ?>"><i class="fas fa-file-download fa-2x" ></i><?= $cb['name_support1'] ?></a>
                     <?php } ?>
                     </div>                  
                   </td>
@@ -197,10 +214,10 @@
   var metakind = htmlEntityChecker('<?= $data['analysis'][0]['goal'] ?>');
   var gl1 = "<?= $gl1; ?>";
   var gl2 = "<?= $gl2; ?>";
+  var BAR_URL = "<?php echo BASE_URL ?>";
   catg = catg.split(',');
   data_csv = data_csv.split(',');
   data_csv.forEach(logArrayElements);
-  
 
  function format (d) {
     // `d` is the original data object for the row
@@ -269,121 +286,32 @@ $(document).ready(function(){
     var id1 = <?=$_GET['id']?>;
     var age_id = $('#age_id').val()
     var frequency_id = $('#frequency_id').val()
+    var type = $('#registers_type').val()
       if($('#age_id').val()){
         table
           .rows()
           .remove()
           .draw();
-        $.post( "/indicator/indicator/indicators/graphic_reports", { age_id: age_id, id: id1 })
-          .done(function( data ) {
-            datos = JSON.parse(data);
-              var info =``;
-              for (const fa of datos.indicators){
-                let support = fa.support;
-                let id = fa.id;
-                let id_inf = fa.inform_id
-                info=`
-                  <tr>
-                    <td class="relative pdd_left_15">
-                    <div class="insd_rltv">
-                      <i class="fas fa-angle-right"></i>
-                    </div>${(fa.frequency_id==1)? fa.name : fa.period }</td>
-                    <td>`+ fa.value +`</td>
-                    <td>`+ fa.inform +`</td>
-                    <td>
-                      <?php if (has_role(1)) { ?>
-                        <div class="strech nowrap">
-                          <a href="../values/edit?id=${fa.id}" class="button edit"><span class="icon edit"></span></a>&nbsp;
-                          <a href="../values/delete?id=${fa.id}" class="delete button "><span class="icon delete"></span></a>
-                        </div>
-                      <?php } ?>
-                    </td>
-                    <td>
-                      <div>
-                        ${(fa.support)?` 
-                            <a data-toggle="tooltip" data-placement="bottom" title="Descargar" href="${fa.support}" download="${fa.name_support}"><i class="fas fa-file-download fa-2x" ></i>${fa.name_support}</a>
-                           ` :""}              
-                      </div>
-                      <div>
-                        ${(fa.support1)?` 
-                            <a data-toggle="tooltip" data-placement="bottom" title="Descargar" href="${fa.support1}" download="${fa.name_support1}"><i class="fas fa-file-download fa-2x" ></i>${fa.name_support1}</a>
-                           ` :""}              
-                      </div>
-                      <div>
-                        
-                      </div> 
-                    </td>
-                  </tr>`;
-                  table.row.add($(info)).draw();
-              }
-              
-                  // var catalogTable = $('#info_table').dataTable();
-                  // catalogTable.fnAddData(info);
-                  
-              // document.getElementById("table_yellow").innerHTML= info
+          get_table_register(age_id, id1,table, type);
+          get_graphic_register(age_id, id1, frequency_id, type);      
 
-              
-          });
-
-         
-
-          $.post( "/indicator/indicator/indicators/report_graph_filter", { age_id: age_id, id: id1, frequency_id: frequency_id })
-            .done(function( data ) {
-
-              data = JSON.parse(data);
-              console.log(data)
-              var catg = data.graph[0]['period'].split(',');
-              data_csv = data.graph[0]['value'].split(',');
-              data_csv.forEach(logArrayElements);
-              chart2 = $('#container23').highcharts();
-              chart2.yAxis[0].removePlotLine('first');
-              chart2.yAxis[0].removePlotLine('second');
-              
-               chart2.yAxis[0].addPlotLine({
-                value: data.lower_l,
-                id: 'first',
-                dashStyle: 'LongDash',
-                zIndex: 10,
-                width: 2,
-                color: '#ff0000',
-                label:{
-                  text:data.gl1+': '+ data.lower_l,
-                  x: -55,
-                style: {
-                  color: '#FFFFFF',
-                  'textOutline': '1px contrast'
-                }
-              }
-              });
-               chart2.yAxis[0].addPlotLine({
-                  value: data.upper_l,
-                  id: 'second',
-                  dashStyle: 'LongDash',
-                  zIndex: 5,
-                  width: 2,
-                  color: '#ff0000',
-                  label:{
-                    text: `${ (data.gl2)? data.gl2+': '+ data.upper_l : ''}`,
-                    align: 'left',
-                    x: -55,
-                    y:-10,
-                    style: {
-                      color: '#FFFFFF',
-                      'textOutline': '1px contrast',
-
-                    }
-                }
-              });
-              chart2.series[0].update({data: data_csv});
-              chart2.series[1].update({data: data_csv});
-              chart2.xAxis[0].update({categories:catg});
-              delimit_boundaries(axis, htmlEntityChecker(data.analysis[0].goal), data.lower_l, data.upper_l, data.gl2);
-              chart2.yAxis[0].redraw();
-              
-            });
+          
           
         }
       });
+
+      $('#registers_type').on('change',function(){
+        var id1 = <?=$_GET['id']?>;
+        var age_id = $('#age_id').val()
+        var type = $('#registers_type').val()
+        var frequency_id = $('#frequency_id').val()
+        table
+          .rows()
+          .remove()
+          .draw();
+        get_table_register(age_id, id1,table, type);
+        get_graphic_register(age_id, id1, frequency_id, type);       
+      })
   })
 	
   $('.no_responsive div.responsive').removeClass("responsive");
@@ -430,7 +358,7 @@ $(document).ready(function(){
               width: 2,
               color: '#ff0000',
               label:{
-                text: `${ (gl2)? gl2+': '+ upper_l : ''}`,
+                text: `${(gl2)? gl2+': '+ upper_l : ''}`,
                 align: 'left',
                 x: -55,
                 y:-10,
@@ -478,14 +406,11 @@ $(document).ready(function(){
           showInLegend: false,
         },
         {
-            type: 'spline',
-            name: 'Tendencia',
-            data: data_csv,
-            color: '#987CEC',
+            type: 'scatter',
+            name: 'goal',
+            data: [lower_l*1],
             marker: {
-              lineWidth: 1,
-              lineColor: '#987CEC',
-              fillColor: 'white'
+              enabled: false
             },
             dataLabels:{
               enabled: false,
@@ -509,6 +434,7 @@ var axis = $('#container23').highcharts().colorAxis[0];
   delimit_boundaries(axis, metakind, lower_l, upper_l, gl2);
 
   function delimit_boundaries(axis, metakind, lower_l, upper_l, gl2){
+    console.log(metakind)
     if(metakind == 2 ){
     
         axis.update({
@@ -574,21 +500,23 @@ var axis = $('#container23').highcharts().colorAxis[0];
         });
     }
     if(metakind == -1){
+      
       if(!gl2){
+        
         axis.update({
             dataClasses: [
             {
-               to: upper_l,
-              from: lower_l,   
+              //  to: upper_l,
+              // from: lower_l,   
               color: '#4AAD45',
               name:  'Cumple'
             },
-            {
-              to:(lower_l-5),         
-              color: '#FF2424',
-              name: 'No cumple'
+            // {
+            //   to:(lower_l-5),         
+            //   color: '#FF2424',
+            //   name: 'No cumple'
 
-            },
+            // },
             ]
         });
       }else{
@@ -615,6 +543,124 @@ var axis = $('#container23').highcharts().colorAxis[0];
         
       }      
     }
+  }
+  function get_table_register(year, ind, table, type){
+    $.post( "/indicator/indicator/indicators/graphic_reports", { age_id: year, id: ind, type:type })
+          .done(function( data ) {
+            datos = JSON.parse(data);
+              var info =``;
+              for (const fa of datos.indicators){
+                let support = fa.support;
+                let id = fa.id;
+                let id_inf = fa.inform_id
+                info=`
+                  <tr>
+                    <td class="relative pdd_left_15">
+                    <div class="insd_rltv">
+                      <i class="fas fa-angle-right"></i>
+                    </div>${(fa.frequency_id==1)? fa.name : fa.period }</td>
+                    <td>`+ fa.value +`</td>
+                    <td>`+ fa.inform +`</td>
+                    <td>
+                      <?php if (has_role(1)) { ?>
+                        <div class=" ">
+                          <a href="../values/edit?id=${fa.id}" class="button edit"><span class="icon edit"></span></a>&nbsp;
+                          <a href="../values/delete?id=${fa.id}" class="delete button "><span class="icon delete"></span></a>
+                        </div>
+                      <?php } ?>
+                    </td>
+                    <td>
+                      <div>
+                        ${(fa.support)?` 
+                            <a data-toggle="tooltip" data-placement="bottom" title="Descargar" href="https://nx001.nexter.us-nyc1.upcloudobjects.com/indicator/${fa.name_support}" download="${fa.name_support}"><i class="fas fa-file-download fa-2x" ></i>${fa.name_support}</a>
+                           ` :""}              
+                      </div>
+                      <div>
+                        ${(fa.support1)?` 
+                            <a data-toggle="tooltip" data-placement="bottom" title="Descargar" href="https://nx001.nexter.us-nyc1.upcloudobjects.com/indicator/${fa.name_support1}" download="${fa.name_support1}"><i class="fas fa-file-download fa-2x" ></i>${fa.name_support1}</a>
+                           ` :""}              
+                      </div>
+                      <div>
+                        
+                      </div> 
+                    </td>
+                  </tr>`;
+                  table.row.add($(info)).draw();
+              }
+              
+                  // var catalogTable = $('#info_table').dataTable();
+                  // catalogTable.fnAddData(info);
+                  
+              // document.getElementById("table_yellow").innerHTML= info
+
+              
+          });
+  }
+  function get_graphic_register(age_id, id1, frequency_id, type){
+    $.post( "/indicator/indicator/indicators/report_graph_filter", { age_id: age_id, id: id1, frequency_id: frequency_id, type:type })
+            .done(function( data ) {
+              
+              data = JSON.parse(data);
+              chart2 = $('#container23').highcharts();
+              chart2.yAxis[0].removePlotLine('first');
+              chart2.yAxis[0].removePlotLine('second');
+              
+              if(data.graph[0]['value']!=null){
+                var catg = data.graph[0]['period'].split(',');
+                data_csv = data.graph[0]['value'].split(',');
+                data_csv.forEach(logArrayElements);
+                
+                
+                chart2.yAxis[0].addPlotLine({
+                  value: data.lower_l,
+                  id: 'first',
+                  dashStyle: 'LongDash',
+                  zIndex: 10,
+                  width: 2,
+                  color: '#ff0000',
+                  label:{
+                    text:data.gl1+': '+ data.lower_l,
+                    x: -55,
+                  style: {
+                    color: '#FFFFFF',
+                    'textOutline': '1px contrast'
+                  }
+                }
+                });
+                chart2.yAxis[0].addPlotLine({
+                    value: data.upper_l,
+                    id: 'second',
+                    dashStyle: 'LongDash',
+                    zIndex: 5,
+                    width: 2,
+                    color: '#ff0000',
+                    label:{
+                      text: `${(data.gl2)? data.gl2+': '+ data.upper_l : ''}`,
+                      align: 'left',
+                      x: -55,
+                      y:-10,
+                      style: {
+                        color: '#FFFFFF',
+                        'textOutline': '1px contrast',
+
+                      }
+                  }
+                });
+                chart2.series[0].update({data: data_csv});
+                chart2.series[1].update({data: [data.lower_l]});
+                chart2.series[0].show();
+                chart2.series[1].show();
+                chart2.xAxis[0].update({categories:catg});
+                delimit_boundaries(axis, htmlEntityChecker(data.analysis[0].goal), data.lower_l, data.upper_l, data.gl2);
+              }else{
+                chart2.series[0].hide();
+                chart2.series[1].hide();
+                chart2.xAxis[0].update({categories:""});
+              }
+              
+              chart2.yAxis[0].redraw();
+              
+            });
   }
  
 
@@ -655,8 +701,4 @@ $('#inverted').click(function () {
     }
   });
 });
-
-
-
-
 </script>

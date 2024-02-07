@@ -99,8 +99,20 @@ function has_privilege($prefix, $controller, $method = 'index')
 
 	$controller = ucfirst($controller);
 
-	if (isset($_SESSION['user']['privileges'][$prefix][$controller][$method]) OR isset($_SESSION['user']['privileges'][$prefix][$controller]['*']) OR isset($_SESSION['user']['privileges'][$prefix]['*']['*']) OR isset($_SESSION['user']['privileges']['*']['*']['*']) OR isset($_SESSION['prefix'])=='public' OR isset($_SESSION['last']['method']) == 'auto_login' OR isset($_SESSION['method']) == 'auto_login')
-		return TRUE;
+	// die($_SESSION);
+	// print_r($_SESSION);
+	// die();
+	// echo '<pre>'.print_r($_SESSION, TRUE).'</pre>'; die();
+	if (isset($_SESSION['user']['privileges'][$prefix][$controller][$method]) 
+		OR isset($_SESSION['user']['privileges'][$prefix][$controller]['*']) 
+		OR isset($_SESSION['user']['privileges'][$prefix]['*']['*']) 
+		OR isset($_SESSION['user']['privileges']['*']['*']['*']) 
+		OR $_SESSION['prefix']=='public' 
+		OR $_SESSION['last']['method'] == 'Auto_login'
+		OR $_SESSION['method'] == 'Auto_login'){
+			
+			return TRUE;
+		}
 	
 
 	return FALSE;
@@ -141,6 +153,47 @@ function an_route($id, $inf_id, $suport){
 	
 	
 	return $route;
+}
+
+function check_if_only_spaces($tocheck){
+	$matches = NULL;
+	preg_match(
+		'/.*\S.*/',
+		$tocheck,
+		$matches
+	);
+	return $matches;
+}
+
+function logchekElements($element) {
+	$match = NULL;
+	preg_match(
+		'/^([≥=<>≤])?\s*\d+\s*(([hH]|horas?)?\s*((:)?\s*(?<=:)(\d{1,2}))?\s*(((?<!\d{1})\d)?((min)|(m))?)?)\s*$/u',
+		$element,
+		$match
+	);
+  $n =null;
+	if($match[0]){
+		preg_match_all('/\d+/', $match[0], $n);
+		if($n[0][0]){
+			if($n[0][1]){
+			  return "{$n[0][0]}.{$n[0][1]}";
+			}else{
+			  return $n[0][0];
+			}
+		}
+	}else{
+		preg_match(
+			'/\d+(\.)?(?<=\.)\d+$/u',
+			$element,
+			$match
+		);
+		if($match[0]){
+			return $match[0];
+		}else{
+			return $element;
+		}
+	}
 }
 
 /* NO BACK (PREVENT BACK BUTTON FROM BROWSER ) ---------------------- */

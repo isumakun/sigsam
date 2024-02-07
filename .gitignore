@@ -5,5 +5,7 @@
 *.pdf
 public/uploads/
 app/mvc/indicator/mockups
+app/configurations
+core/bootstrap.php
 .fake
 .ionide

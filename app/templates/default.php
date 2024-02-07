@@ -12,7 +12,7 @@
 
 	<!-- UMVC CSS -->
 	<link href="<?=BASE_URL?>public/assets/css/umvc002.css?date=<?= date('Y-m-d') ?>" rel="stylesheet">
-	<link href="<?=BASE_URL?>public/assets/css/project.css" rel="stylesheet">
+	<link href="<?=BASE_URL?>public/assets/css/project.css?date=<?= date('Y-m-d His') ?>" rel="stylesheet">
 	<link href="<?=BASE_URL?>public/assets/images/dhr.png" rel="shortcut icon" type="image/png">
 	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 	<link rel="stylesheet" href="<?=BASE_URL?>public/assets/css/fontawesome/css/all.css">
@@ -29,12 +29,12 @@
 	<link href="<?=BASE_URL?>public/assets/admin/vendors/pace-progress/css/pace.min.css" rel="stylesheet">
 
 	<!-- UMVC JS -->
-	<script src="<?=BASE_URL?>public/assets/js/umvc002.js?date=<?= date('Y-m-d') ?>"></script>
+	<script src="<?=BASE_URL?>public/assets/js/umvc002.js?date=<?= date('Y-m-d His') ?>"></script>
 	<script src="<?=BASE_URL?>public/assets/js/project.js"></script>
 	<script src="<?=BASE_URL?>public/assets/js/respond.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-	<script src="<?=BASE_URL.'public/vendors/push/serviceWorker.min.js'?>"></script>
-	<script src="<?=BASE_URL.'public/vendors/push/push.min.js'?>"></script>
+	<!-- <script src="<?=BASE_URL.'public/vendors/push/serviceWorker.min.js'?>"></script> -->
+	<!-- <script src="<?=BASE_URL.'public/vendors/push/push.min.js'?>"></script> -->
 
 	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

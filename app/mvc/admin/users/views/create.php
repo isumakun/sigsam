@@ -1,53 +1,94 @@
 <?php 
 $calendar = new Calendar();
 ?>
-	<h2>Nuevo Usuario</h2>
-	<form method="POST" enctype="multipart/form-data" autocomplete="on">
-		
-		<label for="username">Usuario:</label>
-		<input name="username" value="<?=$user['username']?>" type="text"/>
+	<style type="text/css">
+		textarea.select2-search__field{
+			position:absolute;
+		}
+		span.select2{
+			width: inherit !important;
+		}
+	</style>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="row">
+				<div class="col-md-12">
+					<h2>Crear Usuario</h2>
+				</div>
+			</div>
+			<hr>
+			<div class="row">
+				<div class="col-md-12">
+					<form method="POST" enctype="multipart/form-data" autocomplete="off">
+						<div class="row marginb">
+							<div class="col-md-12">
+								<label for="username">Nombre de Usuario:</label>
+								<input name="username" value="" type="text" placeholder="Debe ser igual al nombre de usuario del portal" required/>
+							</div>
+						</div>
+						<div class="row marginb">
+							<div class="col-md-6">
+								<label for="first_name">Nombres:</label>
+								<input name="first_name" value="" type="text" required/>
+							</div>
+							<div class="col-md-6">
+								<label for="last_name">Apellidos:</label>
+								<input name="last_name" value="" type="text" required/>
+							</div>
+						</div>
+						<div class="row marginb">
+							<div class="col-md-12">
+								<label for="email">Email:</label>
+								<input name="email" value="" type="email" required/>
+							</div>
+						</div>
+						<div class="row marginb">
+							<div class="col-md-12">
+								<label for="rol_id">Rol:</label>
+								<select name="rol_id" class="select2" required>
+									<option disabled selected>Seleccionar</option>
+									<?php foreach ($roles as $rol) { ?>
+										<option value="<?=$rol['id']?>" ><?=$rol['name']?></option>
+									<?php } ?>
+								</select>
+							</div>
+						</div>
+						<div class="row marginb">
+							<div class="col-md-12">
+								<label for="job_position">Cargo:</label>
+								<input type="text" name="job_position" value="" placeholder="Cargo que desempeña" required/>
+							</div>
+						</div>
+						<div class="row marginb">
+							<div class="col-md-12">
+								<label for="companies">Empresas:</label>
+								<select name="companies[]" class="select2" multiple='multiple' required>
+									<option disabled>Seleccionar</option>
+									<?php foreach ($companies as $c) { ?>
+										<option value="<?=$c['id']?>" ><?=$c['name']?></option>
+									<?php
+									} ?>
+								</select>
+							</div>
+						</div>
+						<div class="row marginb">
+							<div class="col-md-12">
+							<input class="confirmp save blueDf" type="button" value="Guardar" />
+							<input style="display: none;" class="submit save" type="submit" value="Guardar"/>
+							</div>
+						</div>
+						<!-- <label for="password">Cambiar Contraseña:</label>
+						<input name="password" type="password"/> -->
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 
-		<label for="first_name">Nombres:</label>
-		<input name="first_name" value="<?=$user['first_name']?>" type="text"/>
-
-		<label for="last_name">Apellidos:</label>
-		<input name="last_name" value="<?=$user['last_name']?>" type="text"/>
-
-		<label for="password">Contraseña:</label>
-		<input name="password" value="<?=$user['password']?>" type="password"/>
-
-		<label for="password2">Confirme Contraseña:</label>
-		<input name="password2" value="<?=$user['password2']?>" type="password"/>
-
-		<label for="email">Email:</label>
-		<input name="email" value="<?=$user['email']?>" type="email"/>
-
-		<label for="rol_id">Rol:</label>
-		<select name="role_id" class="select2">
-			<option></option>
-			<?php foreach ($roles as $rol) {
-				?>
-				<option value="<?=$rol['id']?>" <?=($user['role_id'] == $rol['id'] ? 'selected' : '')?>><?=$rol['name']?></option>
-				<?php
-			} ?>
-		</select>
-
-		<label for="companies">Empresas:</label>
-		<select name="companies[]" class="select2" multiple>
-			<option value="0">Todas</option>
-			<?php foreach ($companies as $c) {
-				?>
-				<option value="<?=$c['id']?>" <?=($user['company_id'] == $c['id'] ? 'selected' : '')?>><?=$c['name']?></option>
-				<?php
-			} ?>
-		</select>
-
-		<input class="submit" type="submit" value="Crear" />
-	</form>
+	
+	
 	<script type="text/javascript">
 		$(document).ready(function(){
-			$('input[name="username"]').on('keyup', function(){
-				$('input[name="email"]').val($(this).val());
-			})
+			
 		})
 	</script>

@@ -62,14 +62,19 @@ function logArrayElements(element, index, array) {
   let n2 = 0;
   if(match){
     if(n1 = match[0].match(/\d+/g)[0]){
-      if(n2 = match[0].match(/\d+/g)[1]){
+      if(n2 = match[0].match(/\d+/g)[1]){      
         array[index] = (n1+'.'+n2)*1;
       }else{
         array[index] = n1*1;
       }
     }
   }else{
-    array[index] = element*1;
+    match = element.toString().match(/\d+(\.)?(?<=\.)\d+$/u);
+    if(match){
+      array[index] = match[0]*1;
+    }else{
+      array[index] = element*1;
+    }
   }
 }
 
@@ -86,7 +91,12 @@ function logchekElements(element) {
       }
     }
   }else{
-    return element*1;
+    match = element.toString().match(/\d+(\.)?(?<=\.)\d+$/u);
+    if(match){
+      return match[0]*1;
+    }else{
+      return element*1;
+    }
   }
 }
 

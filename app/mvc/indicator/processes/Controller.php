@@ -5,10 +5,12 @@ Class Controller extends ControllerBase {
 /*------------------------------------------------------------------------------
 	INDEX
 ------------------------------------------------------------------------------*/
-	public function index()
-	{
+	public function index(){
+		// error_reporting(E_ALL);
+		// ini_set('display_errors', TRUE);
+		
 		$data['processes'] = $this->model('indicator/processes')->get_all();
-
+		
 		$this->view('', $data, 'fullwidth');
 	}
 
@@ -18,17 +20,13 @@ Class Controller extends ControllerBase {
 ------------------------------------------------------------------------------*/
 	public function create()
 	{
-		if ($_POST)
-		{
-				if ($this->model('indicator/processes')->create($_POST))
-				{
-					set_notification("Registro creado correctamente", 'success', TRUE);
-					redirect("indicator/processes");
-				}
-				else
-				{
-					set_notification("El registro no pudo ser creado", 'error');
-				}
+		if ($_POST){
+			if ($this->model('indicator/processes')->create($_POST)){
+				set_notification("Registro creado correctamente", 'success', TRUE);
+				redirect("indicator/processes");
+			}else{
+				set_notification("El registro no pudo ser creado", 'error');
+			}
 		}
 		
 		$data['type_processes'] = $this->model('indicator/type_processes')->get_all();
@@ -47,18 +45,13 @@ Class Controller extends ControllerBase {
 			redirect("indicator/processes");
 		}
 
-		if ($_POST)
-		{
-			
-				if ($this->model('indicator/processes')->update_by_id($_GET['id'], $_POST))
-				{
-					set_notification("Guardado");
-					redirect("indicator/processes");
-				}
-				else
-				{
-					set_notification("El registro no pudo ser actualizado", 'error');
-				}
+		if ($_POST){
+			if ($this->model('indicator/processes')->update_by_id($_GET['id'], $_POST)){
+				set_notification("Guardado");
+				redirect("indicator/processes");
+			}else{
+				set_notification("El registro no pudo ser actualizado", 'error');
+			}
 		}
 		
 		$data['type_processes'] = $this->model('indicator/type_processes')->get_all();
@@ -71,12 +64,9 @@ Class Controller extends ControllerBase {
 ------------------------------------------------------------------------------*/
 	public function delete()
 	{
-		if ($this->model('indicator/processes')->delete_by_id($_GET['id']))
-		{
+		if ($this->model('indicator/processes')->delete_by_id($_GET['id'])){
 			set_notification("Eliminado", 'success', TRUE);
-		}
-		else
-		{
+		}else{
 			set_notification("No se pudo eliminar", 'Error');
 		}
 

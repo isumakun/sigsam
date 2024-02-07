@@ -74,6 +74,7 @@ $(document).ready(function()
 	/* CONFIRM ACTION ------------------------------------------- */
 	$('#main_content').on('click', 'a.confirm_action', function(e){var confirm_action = confirm('No se puede deshacer esta acción. ¿Deseas continuar?');if (!confirm_action) e.preventDefault();});
 
+	
 	/* CONFIRM ACTION BUT BETTER ------------------------------------------- */
 	$('#main_content').on('click', 'a.delete', function(e){
 		e.preventDefault();
@@ -104,6 +105,41 @@ $(document).ready(function()
               icon: 'info',
               html:
                 `Por favor selecciona un indicador <span style="background-color: #eaeaea">dando <b>clic</b> sobre este. <span/>`,
+              showCloseButton: true,
+              focusConfirm: false
+            })
+        }
+	});
+
+	$('#main_content').on('click', 'a.change_state', function(e){
+		e.preventDefault();
+
+
+		var href = this.href
+        var hrefn = this.href.substring(this.href.lastIndexOf('/') + 1);
+        if(hrefn.match(/[0-9]\d*/g)){
+
+        	Swal.fire({
+	            title: '¿Seguro desea cambiar el estado de este usuario?',
+	            text: "",
+	            type: 'warning',
+	            icon: 'warning',
+	            showCancelButton: true,
+	            confirmButtonColor: '#3085d6',
+	            cancelButtonColor: '#d33',
+	            confirmButtonText: 'Si',
+	            cancelButtonText: 'Cancelar'
+	        }).then(function(isConfirmed) {
+	        	if(isConfirmed.isConfirmed){
+	        		window.location.href = href;
+	        	}	            
+	        })
+        }else{
+            Swal.fire({
+              title: '<strong style="background-color: #eaeaea">Indicador no seleccionado</strong>',
+              icon: 'info',
+              html:
+                `Por favor selecciona un usuario <span style="background-color: #eaeaea">dando <b>clic</b> sobre este. <span/>`,
               showCloseButton: true,
               focusConfirm: false
             })

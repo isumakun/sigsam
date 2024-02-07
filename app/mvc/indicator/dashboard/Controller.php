@@ -8,12 +8,14 @@ class Controller extends ControllerBase {
 	public function index()
 	{
 		// $this->view('Inicio', $data, 'fullwidth');
-		$data['indicators'] = $this->model('indicator/indicators')->get_all($_SESSION['user']['company_id']);
-		// if(has_role(2)|| has_role(3)){
-		// 	$data['indicators'] = $this->model('indicator/indicators')->getall_by_rol($_SESSION['user']['company_id']);
-		// }else{
-		// 	$data['indicators'] = $this->model('indicator/indicators')->get_all($_SESSION['user']['company_id']);
-		// }
+		// $data['indicators'] = $this->model('indicator/indicators')->get_all(1);
+
+		//Vuelvo a activar esto por Herineldo :v
+		 if(has_role(2)|| has_role(3)){
+			$data['indicators'] = $this->model('indicator/indicators')->getall_by_rol($_SESSION['user']['company_id']);
+		}else{
+			$data['indicators'] = $this->model('indicator/indicators')->get_all(1);
+		}
 		
 		$data['page_title'] = 'Indicadores';
 		$this->view('', $data, 'fullwidth');

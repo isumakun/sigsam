@@ -32,8 +32,8 @@
 	<script src="<?=BASE_URL?>public/assets/js/project.js"></script>
 	<script src="<?=BASE_URL?>public/assets/js/respond.min.js"></script>
 	<script src="<?=BASE_URL.'public/vendors/select2-4.0.3/dist/js/select2.min.js'?>"></script>
-	<script src="<?=BASE_URL.'public/vendors/push/serviceWorker.min.js'?>"></script>
-	<script src="<?=BASE_URL.'public/vendors/push/push.min.js'?>"></script>
+	<!-- <script src="<?=BASE_URL.'public/vendors/push/serviceWorker.min.js'?>"></script> -->
+	<!-- <script src="<?=BASE_URL.'public/vendors/push/push.min.js'?>"></script> -->
 
 	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 

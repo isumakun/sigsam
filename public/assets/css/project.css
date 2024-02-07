@@ -209,6 +209,15 @@ a.black:hover{
 a.gray:hover{
   background-color: #648391 !important;
 }
+.bluePr { color: #FFF; background-color: #279db2 !important; }
+.blueDf { color: #FFF; background-color: #63c2de !important; }
+button.bluePr:focus{
+  outline: none !important;
+}
+.noBorder, .noBorder:focus{
+  border: none;
+}
+button.bluePr:hover{background-color:orange !important;}
 /* Dropdown Button */
 .dropbtn {
     color: white;

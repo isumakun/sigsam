@@ -37,7 +37,7 @@ public function get_by_id($id)
 					ON ii.user_id = c.id
 		LEFT JOIN	indicator_types AS t
 					ON t.id = i.type_id
-		INNER JOIN	indicator_processes AS p
+		LEFT JOIN	indicator_processes AS p
 					ON p.id = i.process_id
 		LEFT JOIN	indicator_type_processes AS tp
 					ON tp.id = p.type_process_id
@@ -54,6 +54,52 @@ public function get_by_id($id)
 	return $this->db->query($sql)->fetchAll();
 }
 
+public function obtain_row($id){
+	$sql = "
+		SELECT
+		i.name,
+		i.formula,
+		i.type_id,
+		i.frequency_id,
+		i.unit,
+		i.process_id,
+		i.category_id
+	FROM		indicator_indicators AS i
+	INNER JOIN	indicator_processes AS p
+		ON p.id = i.process_id
+	WHERE   p.company_id = ".$_SESSION['user']['company_id']."
+	AND i.id = $id
+	AND i.visibility = 1
+	";
+	
+	return $this->db->query($sql)->fetchAll();
+}
+
+public function insert_indicator_modification_log($indicator_id,$prev, $nuev){
+	$sql = "
+		INSERT INTO `indicators_modification_log`(
+			`unchanged_fields`,
+			`modified_fields`,
+			`indicator_id`,
+			`modified_by`,
+			`modification_date`
+		)
+		VALUES(
+			COALESCE(NULLIF('{$prev}', ''), NULL),
+			'$nuev',
+			'$indicator_id',
+			'{$_SESSION['user']['id']}',
+			NOW()
+		)
+	";
+	// if($_SESSION['user']['id'] == 107){
+	// 	die($sql);
+	// }
+	return $this->db->query($sql);
+}
+/*------------------------------------------------------------------------------
+	change_visibility_indicator_goals: set visibility to 0(delete) or 1(active) 
+------------------------------------------------------------------------------*/
 public function change_visibility_indicator_goals($id, $visibility){
 	$sql = "
 		UPDATE `indicator_goals` SET
@@ -69,30 +115,34 @@ public function change_visibility_indicator_goals($id, $visibility){
 /*------------------------------------------------------------------------------
 	GET ALL
 ------------------------------------------------------------------------------*/
-public function get_all(){
+public function get_all($visibility){
 	$sql = "
 
-		SELECT		i.id,
-					i.name,
-					i.formula,
-					indg.upper_limit,
-					indg.lower_limit,
-					i.type_id,
-					indg.goal,
-					i.category_id,
-					i.frequency_id,
-					i.process_id,
-					f.name AS 'frequency',
-					t.name AS 'type',
-					GROUP_CONCAT(DISTINCT c.id SEPARATOR ', ') AS 'charge_id',
-    				GROUP_CONCAT(DISTINCT c.job_position SEPARATOR ',') AS 'job_position',
-					c.user_id AS 'chager',
-					p.name AS 'process',
-					p.company_id,
-					tp.name AS 'type_process',
-					i.unit
-		FROM		indicator_indicators AS i
-		INNER JOIN(
+			SELECT
+			i.id,
+			i.name,
+			i.formula,
+			indg.upper_limit,
+			indg.lower_limit,
+			i.type_id,
+			indg.goal,
+			i.category_id,
+			i.frequency_id,
+			i.process_id,
+			f.name AS 'frequency',
+			t.name AS 'type',
+			GROUP_CONCAT(DISTINCT c.id SEPARATOR ', ') AS 'charge_id',
+			GROUP_CONCAT(
+				DISTINCT c.job_position SEPARATOR ','
+			) AS 'job_position',
+			c.user_id AS 'chager',
+			p.name AS 'process',
+			p.company_id,
+			tp.name AS 'type_process',
+			i.unit
+		FROM
+			indicator_indicators AS i
+		LEFT JOIN(
 			SELECT
 				igg.indicator_id,
 				igg.goal,
@@ -100,33 +150,56 @@ public function get_all(){
 				igg.lower_limit
 			FROM
 				indicator_goals AS igg
-				WHERE igg.visibility = 1
-				GROUP BY igg.indicator_id
+			WHERE
+				igg.visibility = 1
+			GROUP BY
+				igg.indicator_id
 			ORDER BY
 				igg.indicator_id
 			DESC
 		) indg
 		ON
 			indg.indicator_id = i.id
-		LEFT JOIN  indicator_user_indicator AS ii 
-					ON ii.indicator_id = i.id 
-		LEFT JOIN  indicator_charges AS c
-					ON ii.user_id = c.id
-		LEFT JOIN	indicator_types AS t
-					ON t.id = i.type_id
-		INNER JOIN	indicator_processes AS p
-					ON p.id = i.process_id
-		LEFT JOIN	indicator_type_processes AS tp
-					ON tp.id = p.type_process_id
-		INNER JOIN	indicator_frequencies AS f
-					ON f.id = i.frequency_id
-			WHERE   p.company_id = {$_SESSION['user']['company_id']}
-			AND i.visibility = 1
-		GROUP BY i.id
-		ORDER BY	i.id ASC
+		LEFT JOIN indicator_user_indicator AS ii
+		ON
+			ii.indicator_id = i.id
+		LEFT JOIN indicator_charges AS c
+		ON
+			ii.user_id = c.id
+		LEFT JOIN indicator_types AS t
+		ON
+			t.id = i.type_id
+		LEFT JOIN(
+			SELECT
+				p.id,
+				p.name,
+				p.company_id,
+				p.type_process_id
+			FROM
+				indicator_processes AS p
+			WHERE
+				p.is_deleted = 0
+		) p
+		ON
+			p.id = i.process_id
+		LEFT JOIN indicator_processes AS ip
+		ON
+			ip.id = i.process_id
+		LEFT JOIN indicator_type_processes AS tp
+		ON
+			tp.id = p.type_process_id
+		INNER JOIN indicator_frequencies AS f
+		ON
+			f.id = i.frequency_id
+		WHERE
+			ip.company_id = {$_SESSION['user']['company_id']} AND i.visibility = $visibility
+		GROUP BY
+			i.id
+		ORDER BY
+			i.id ASC
 	   
 	";
-
+	
 	return $this->db->query($sql)->fetchAll();
 }
 
@@ -222,7 +295,7 @@ public function getall_by_rol($rol){
 		ORDER BY	i.id ASC
 
 	";
-
+	// die($sql);
 	return $this->db->query($sql)->fetchAll();
 }
 
@@ -246,6 +319,7 @@ public function get_supports($id)
 					ON u.id = v.created_by
 		WHERE i.id = $id
 		AND i.visibility = 1
+		AND v.visibility = 1
 		ORDER BY	v.id ASC
 
 	")->fetchAll();
@@ -337,7 +411,6 @@ public function get_search_category($category,$process,$indicator){
 		$where_indicator
 		GROUP BY i.id";
 
-		
 	return $this->db->query($sql)->fetchAll();
 }
 
@@ -462,7 +535,7 @@ public function get_all_goals_indicator($id){
 			$sql = "
 
 			INSERT
-			INTO		indicator_indicators (`name`, `formula`,`goal`, `upper_limit`, `lower_limit`, `type_id`, `process_id`, `frequency_id`, `unit`,`category_id`)
+			INTO		indicator_indicators (`name`, `formula`,`goal`, `upper_limit`, `lower_limit`, `type_id`, `process_id`, `frequency_id`, `unit`,`category_id`,`created_by`, `creation_date`)
 			VALUES		('{$params['name']}',
 			             '{$params['formula']}',
 			             '{$params['goal']}',
@@ -472,20 +545,22 @@ public function get_all_goals_indicator($id){
 						 '{$params['process_id']}',
 						 '{$params['frequency_id']}',
 						 '{$params['unit']}',
-						 '{$params['category_id']}')
+						 '{$params['category_id']}',
+						 '{$_SESSION['user']['id']}', now())
 
 		";
 		} else{
 			$sql = "
 
 			INSERT
-			INTO		indicator_indicators (`name`, `formula`, `process_id`, `frequency_id`, `unit`,`category_id`)
+			INTO		indicator_indicators (`name`, `formula`, `process_id`, `frequency_id`, `unit`,`category_id`, `created_by`, `creation_date`)
 			VALUES		('{$params['name']}',
 			             '{$params['formula']}',
 						 '{$params['process_id']}',
 						 '{$params['frequency_id']}',
 						 '{$params['unit']}',
-						 '{$params['category_id']}')
+						 '{$params['category_id']}',
+						 '{$_SESSION['user']['id']}', now())
 
 		";
 			
@@ -563,11 +638,13 @@ public function get_all_goals_indicator($id){
 						`lower_limit` = '{$params['lower_limit']}',
 						`type_id` = COALESCE(NULLIF('{$params['type_id']}', ''), null),
 						`process_id` = COALESCE(NULLIF('{$params['process_id']}', ''), `process_id`),
+						`category_id` = COALESCE(NULLIF('{$params['category_id']}', ''), `category_id`),
 						`frequency_id` = COALESCE(NULLIF('{$params['frequency_id']}', ''), `frequency_id`),
 						`unit` = '{$params['unit']}'
 			WHERE		id = '$id'
 
 		";
+		
 		return $this->db->query($sql);
 	}
 /*------------------------------------------------------------------------------
@@ -641,12 +718,12 @@ public function get_all_goals_indicator($id){
 	turn_off_visibility = instead of deleting the indicator and all its registers, we change visibility to 0
 ------------------------------------------------------------------------------*/
 
-	public function turn_off_visibility($id){
+	public function turn_offon_visibility($id, $visibility){
 		$sql = "
 			UPDATE
 			    `indicator_indicators`
 			SET
-			    `visibility` = '0'
+			    `visibility` = $visibility
 			WHERE
 			    `indicator_indicators`.`id` = $id";
 

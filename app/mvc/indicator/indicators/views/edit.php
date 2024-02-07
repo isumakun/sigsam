@@ -217,6 +217,7 @@ span.select2{
 	background-color: #f4e1e1;
 	border: 1px solid #c77a7a;
 	color: #9d3939;
+	letter-spacing:0px;
 }
 .button-9:hover, .button-9:focus{
   background-color: #eab3b3;
@@ -270,7 +271,8 @@ span.select2{
 				</div>
 				<div class="col-md-8">
 					<label for="process_id">Proceso:</label>
-					<select name="process_id">
+					<select name="process_id" required>
+						<option disabled selected>Seleccionar</option>
 						<?php foreach($process AS $p) { ?>
 							<option value="<?=$p['id']?>" <?=($indicator[0]['process_id'] == $p['id'] ? 'selected' : '')?>><?=$p['name']?></option>
 						<?php  } ?>
@@ -284,7 +286,7 @@ span.select2{
 				<div class="col-md-12 marginb">
 					<label for="charge_id">Responsables:</label>
 					<select class='select2_custom' name='charge_id[]' multiple='multiple' id="charge_id" required>
-						<?php foreach($charges AS $c) { echo $c; ?>
+						<?php foreach($charges AS $c) {?>
 							<option value="<?=$c['id']?>" <?=((in_array($c['id'], $charges_ind)) ? 'selected' : '')?>>[<?=$c['first_name']?> <?=$c['last_name']?>] %<?=$c['job_position']?>% </option>
 						<?php } ?>
 					</select>
@@ -336,14 +338,15 @@ span.select2{
 					<hr>
 					<div class="form-group col-md-12" id="upper_limit1" style="display:none;">
 						<div class="row">
+							
 							<div class="col-md-6">
-							<label for="upper_limit"  >L&iacute;mite Superior:</label>
-							<input name="upper_limit" value="" type="text"/>
-						</div>
-						<div class="col-md-6">
-							<label for="lower_limit">L&iacute;mite Inferior:</label>
-							<input name="lower_limit" value="" type="text"/>
-						</div>
+								<label for="lower_limit">L&iacute;mite Inferior:</label>
+								<input name="lower_limit" value="" type="text"/>
+							</div>
+							<div class="col-md-6">
+								<label for="upper_limit"  >L&iacute;mite Superior:</label>
+								<input name="upper_limit" value="" type="text"/>
+							</div>
 						</div>
 					</div>
 					<div class="form-group" id="goal1" style="display:none;">
@@ -378,7 +381,11 @@ span.select2{
 		  				<div class="marginb row group" data-id="<?= $val['id'] ?>">
 		  					
 		  					<div class="col-md-12">
+								
 		  						<label>Fecha de creación: <?= ($val['creation_date'])? $val['creation_date'] : 'No registra' ?></label>
+								<?php if(has_role(1) && $_SESSION['user']['id'] == 107){ ?>
+									<button title="delete registro" class="button-9 float_right delete_goals" role="button"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+								<?php }?>
 		  						<button title="Cancelar" class="button-8 float_right log_goals" disabled style="display: none;"><i class="fas fa-file-signature"></i></button>
 		  						<button title="Editar registro" class="button-8 float_right edit_goals" role="button"><i class='fas fa-pen'></i></button>
 		  						
@@ -394,17 +401,18 @@ span.select2{
 			  						</div>
 			  						<div class="col-md-3">
 			  							<select id="metakind_<?= $val['id'] ?>" name="meta_edition_goalSing" disabled>
-					              <option>&#8805;</option>
-					              <option>&leq;</option>
-					              <option>&lt;</option>
-					              <option>&gt;</option>
-					              <option>&equals;</option>
-					            </select>
+											<option>&#8805;</option>
+											<option>&leq;</option>
+											<option>&lt;</option>
+											<option>&gt;</option>
+											<option>&equals;</option>
+										</select>
 			  						</div>
 			  						<div class="col-md-5">
-				  						<input type="text" name="meta_edition_goal" readonly value="<?=$val['goal']?>">
+				  						<input type="text" name="meta_edition_goal" readonly value="<?=$val['goal']?>" disabled>
 				  					</div>
 				  					<div class="col-md-2">
+										
 					  				</div>
 			  					</div>
 			  					
@@ -417,12 +425,13 @@ span.select2{
 			  						<div class="col-md-2 center_vertically">
 						  					<label>L&iacute;mites:</label>
 						  				</div>
+										  <div class="col-md-4">
+						  					Limite inferior: <input type="text" name="meta_edition_linf" readonly value="<?= $val['lower_limit'] ?>">    
+						  				</div>
 						  				<div class="col-md-4">
 						  						Limite superior: <input type="text" name="meta_edition_lsup" readonly value="<?= $val['upper_limit'] ?>"> 
 						  				</div>
-						  				<div class="col-md-4">
-						  					Limite inferior: <input type="text" name="meta_edition_linf" readonly value="<?= $val['lower_limit'] ?>">    
-						  				</div>
+						  				
 						  				<div class="col-md-2">
 						  				</div>
 			  					</div>
@@ -464,7 +473,7 @@ span.select2{
 	  
 	</div>
 	
-	<input class="confirmp save" type="button" value="Guardar" />
+	<input class="confirmp save blueDf" type="button" value="Guardar" />
 	<input style="display: none;" class="submit save" type="submit" value="Guardar" />
 </form>
 
@@ -495,6 +504,7 @@ span.select2{
 			if(divgroupMeta.length){
 				divgroupMeta.find('select[name=meta_edition_goalSing]').prop("disabled", false);
 				divgroupMeta.find('input[name=meta_edition_goal]').prop("readonly", false);
+				divgroupMeta.find('input[name=meta_edition_goal]').prop("disabled", false);
 			}
 			buttonEditGoals.addClass('save_edit_goals')
 			buttonEditGoals.removeClass('edit_goals')
@@ -509,6 +519,7 @@ span.select2{
 			if(divgroupMeta.length){
 				divgroupMeta.find('select[name=meta_edition_goalSing]').prop("disabled", true);
 				divgroupMeta.find('input[name=meta_edition_goal]').prop("readonly", true);
+				divgroupMeta.find('input[name=meta_edition_goal]').prop("disabled", true);
 			}
 			// button.html("<i class='fas fa-pen'></i>")
 			buttonEditGoals.html("<i class='fas fa-pen'></i>")
@@ -540,7 +551,6 @@ span.select2{
 				}
 			}
 			
-			
 			let nuewLsup = button.closest('.group').find('.limit_div').find('input[name=meta_edition_lsup]').val()
 			let nuewLinf = button.closest('.group').find('.limit_div').find('input[name=meta_edition_linf]').val()
 
@@ -548,19 +558,23 @@ span.select2{
 
         	.done(function( data ) {
         		if(divgroupLimit.length){
-							divgroupLimit.find('input').prop("readonly", true);
-						}
-						if(divgroupMeta.length){
-							divgroupMeta.find('select[name=meta_edition_goalSing]').prop("disabled", true);
-							divgroupMeta.find('input[name=meta_edition_goal]').prop("readonly", true);
-						}
-						button.html("<i class='fas fa-pen'></i>")
-						button.removeClass('save_edit_goals')
-						button.addClass('edit_goals')
-						if(!nuewLsup && !nuewLinf &&  !newMeta){
-							divGroup.hide('slow');
-						}
+					divgroupLimit.find('input').prop("readonly", true);
+				}
+				if(divgroupMeta.length){
+					divgroupMeta.find('select[name=meta_edition_goalSing]').prop("disabled", true);
+					divgroupMeta.find('input[name=meta_edition_goal]').prop("readonly", true);
+				}
+				button.html("<i class='fas fa-pen'></i>")
+				button.removeClass('save_edit_goals')
+				button.addClass('edit_goals')
+				if(!nuewLsup && !nuewLinf &&  !newMeta){
+					divGroup.hide('slow');
+				}
         	});
+		})
+
+		$(document).on('click', 'button.delete_goals', function(){
+
 		})
 
 		$(document).on('click', '.alert-warning', function(){

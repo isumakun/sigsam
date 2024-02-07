@@ -80,8 +80,8 @@
     <div id="inform_div">
       <div>
         <label style="width:auto" for="analysis">Análisis :</label>
-        <input type="text" name="inform_type" value="1" style="display: none;">
-        <select id="inform_class" name="inform_class"  style="width: auto;float: inherit;border: #357cbb;">
+        <input type="text" name="inform_type_id" value="1" style="display: none;">
+        <select id="inform_class_id" name="inform_class_id"  style="width: auto;float: inherit;border: #357cbb;">
           <?php foreach ($inform_class as $key) { ?>
             <?php if ($indicators['frequency_id']!=1 && $key['id'] != 2 ) { ?>
               <option value="<?= $key['id'] ?>" <?= ($key['id']==$indicators['inform_class_id'])? 'selected' : '' ?> ><?= $key['name'] ?></option>
@@ -106,7 +106,7 @@
   </div>
 </div>
 		<div class="btn-group">
-      <input class="confirmp save" type="button" value="Guardar" />
+      <input class="confirmp save blueDf" type="button" value="Guardar" />
       <input style="display: none;" class="submit save" type="submit" value="Crear" />
     </div>
 	</form>

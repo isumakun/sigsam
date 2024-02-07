@@ -14,7 +14,6 @@ Class Datagrid {
 
 	public static function set_options($model, $method, $params, $state_save = TRUE)
 	{
-		
 		static::$model = $model;
 		static::$method = $method;
 		static::$params = $params;
@@ -89,7 +88,7 @@ Class Datagrid {
 						pageLength: 10,
 						columnDefs: [
 							{ responsivePriority: 1, targets: 0 },
-							{ responsivePriority: 1, targets: -1 }
+							{ responsivePriority: 2, targets: -1 }
 						],
 						dom: 'lfrtpi',
 						ajax: {

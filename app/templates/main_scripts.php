@@ -25,19 +25,18 @@ if (isset($_SESSION['notifications']))
 
 	}
 </style>
-<div id="change_company" class="modal" >
-	<form action="<?=BASE_URL?>indicator/dashboard/change_company" method="POST">
-		<select name="company">
-			<?php foreach ($_SESSION['user_companies'] as $company) {
-				?>
-				<option value="<?=$company['id']?>"><?=$company['id']?> - <?=$company['name']?></option>
-				<?php
-			} ?>
-		</select>
-		<input type="submit" value="Cambiar Empresa" class="button dark">
-	</form>
+<div id="change_company" class="modal">
+  <form action="<?=BASE_URL?>indicator/users_companies/change_company" method="POST">
+    <select name="company">
+      <?php foreach ($_SESSION['user']['companies'] as $company) {
+        ?>
+        <option value="<?=$company['company_id']?>"><?=$company['company']?></option>
+        <?php
+      } ?>
+    </select>
+    <input type="submit" value="Cambiar Empresa" class="button dark">
+  </form>
 </div>
-
 <div class="modal better_modal" id="confirmation_box" tabindex="-1" role="dialog" aria-labelledby="modalCenter" aria-hidden="true" style="">
 	<form method='post' enctype="multipart/form-data" action='' id="modal_form">
 		<center style="padding: 30px 0px;"><h3>Esta a punto de eliminar este registro, ¿desea continuar?</h3></center>
@@ -70,6 +69,13 @@ if (isset($_SESSION['notifications']))
 <script type="text/javascript">
 
 	$(document).ready(function() {
+		$('#change_company input[type=submit]').on('click', function(e){
+			e.preventDefault();
+			localStorage.removeItem( 'DataTables_example_/indicator/');
+			localStorage.removeItem( 'DataTables_example_/indicator/admin/users');
+			$('#change_company form').submit();
+		})
+
 		$('.select2').select2();
 
 		$('.select2_custom').select2({
@@ -103,11 +109,11 @@ if (isset($_SESSION['notifications']))
 			return name;
 		}
 
-		$("form").submit(function() {
-			$('input[type=submit]').prop('disabled',true);
-			$('a').attr('disabled', 'disabled');
-			return true;
-		});
+		// $("form").submit(function() {
+		// 	$('input[type=submit]').prop('disabled',true);
+		// 	$('a').attr('disabled', 'disabled');
+		// 	return true;
+		// });
 
 		/* SHOW MODAL DECIDE ANALISIS ------------------------------------------- */
 		$('#analisismodal_show').on('click', function(e){

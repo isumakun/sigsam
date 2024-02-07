@@ -1,6 +1,10 @@
+
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.6.1/css/buttons.dataTables.min.css" />
 <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css" />
 <style>
+    #main_content{
+        overflow: auto;
+    }
     .responstable {
   margin: 1em 0;
   width: 100%;
@@ -195,31 +199,34 @@ function check_value(string_val){
                         <thead>
                             <tr>
                                 <th colspan="23"><h1>MATRIZ DE INDICADORES</h1><img class="test" width="200" height="100" src="<?=BASE_URL?>/public/resources/users_signs/<?=$_SESSION['user']['company_name']?>.png">
+                                    <div id="some-container">
+                                        <div class="dt-buttons"> <button class="dt-button buttons-copy buttons-html5" tabindex="0" aria-controls="example" type="button"><span>Copiar</span></button> <button class="dt-button buttons-excel buttons-html5" tabindex="0" aria-controls="example" type="button"><span>excel</span></button> </div>
+                                    </div>
                                 </th>
                             </tr>
                             <tr>
                                 <th>Proceso</th>
                                 <th>Nombre Indicador</th>
                                 <th>Fórmula</th>
-                                <th>Ud.</th>
+                                <th>Unidad</th>
                                 <th>Frecuencia</th>
                                 <th>Meta</th>
                                 <th>Lim Inf</th>
                                 <th>Lim Sup</th>
                                 <th>Tipo de Indicador</th>
                                 <th>Responsable</th>
-                                <th>Enero</th>
-                                <th>Febrero</th>
-                                <th>Marzo</th>
-                                <th>Abril</th>
-                                <th>Mayo</th>
-                                <th>Junio</th>
-                                <th>Julio</th>
-                                <th>Agosto</th>
-                                <th>Septiembre</th>
-                                <th>Octubre</th>
-                                <th>Noviembre</th>
-                                <th>Diciembre</th>
+                                <th>Ene</th>
+                                <th>Feb</th>
+                                <th>Mar</th>
+                                <th>Abr</th>
+                                <th>May</th>
+                                <th>Jun</th>
+                                <th>Jul</th>
+                                <th>Ago</th>
+                                <th>Sep</th>
+                                <th>Oct</th>
+                                <th>Nov</th>
+                                <th>Dic</th>
                                 <th>Promedio</th>
                             </tr>
                         </thead>
@@ -227,23 +234,23 @@ function check_value(string_val){
                         
                             if(info != null){
                                 for (const x in info.report) {
-                                    var january=''
-                                    var february=''
-                                    var march=''
-                                    var april=''
-                                    var may=''
-                                    var june=''
-                                    var july=''
-                                    var august=''
-                                    var september=''
-                                    var october=''
-                                    var november=''
-                                    var december=''
-                                    var periods=""
+                                    let january=''
+                                    let february=''
+                                    let march=''
+                                    let april=''
+                                    let may=''
+                                    let june=''
+                                    let july=''
+                                    let august=''
+                                    let september=''
+                                    let october=''
+                                    let november=''
+                                    let december=''
+                                    let periods=""
                                     let goal = ''
-                                    var count = 0
-                                    var add = 0
-                                    var prom = 0
+                                    let count = 0
+                                    let add = 0
+                                    let prom = 0
 
                                     lower_limit = (info.report[x].lower_limit)? info.report[x].lower_limit.match(/.*\S.*/g) : null ;
                                     upper_limit = (info.report[x].upper_limit)? info.report[x].upper_limit.match(/.*\S.*/g) : null ;
@@ -277,8 +284,37 @@ function check_value(string_val){
                                             add = logchekElements(vr.value) + add;
                                             count++;
                                             var vc = '';
-
                                             switch (vr.frequency_id) {
+                                                case 6:
+                                                    if (vr.period=='Primer Bimestre') {
+                                                        february =check_value(vr.value);
+                                                    }
+                                                    if (vr.period=='Segundo Bimestre') {
+                                                        april =check_value(vr.value);
+                                                        // august =vr.value
+                                                    }
+                                                    if (vr.period=='Tercer Bimestre') {
+
+                                                        june =check_value(vr.value);
+                                                        // december=vr.value
+                                                    }; 
+                                                    if (vr.period=='Cuarto Bimestre') {
+
+                                                        august =check_value(vr.value);
+                                                        // december=vr.value
+                                                    }; 
+                                                    if (vr.period=='Quinto Bimestre') {
+
+                                                        october =check_value(vr.value);
+                                                        // december=vr.value
+                                                    }; 
+                                                    if (vr.period=='Sexto Bimestre') {
+
+                                                        december =check_value(vr.value);
+                                                        // december=vr.value
+                                                    }; 
+                                                break;
+                                                
                                                 case 5:
                                                     if (vr.period=='Primer Cuatrimestre') {
                                                         april =check_value(vr.value);

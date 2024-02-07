@@ -96,19 +96,19 @@ function upload_to_bucket($posted_file, $folder, $filename){
 	
 	if ($posted_file['size'] == 0 OR !isset($posted_file) OR !$posted_file)
 	{
-		\JJ\Flash::instance()->set_message('No se encontró ningún archivo para adjuntar', 'error');
+		set_notification('No se encontró ningún archivo para adjuntar', 'error');
 		return FALSE;
 	}
 
-	$dir = "/var/www/html/indicator/public/uploads/";
+	$dir = '/var/www/html/indicator/public/uploads/';
 	if($folder!=""){
-		$dir = "/var/www/html/indicator/public/uploads/$folder";
+		$dir = '/var/www/html/indicator/public/uploads/'.$folder;
 		$folder = $folder.'/';
 	}
 
-	//echo '<pre>'.print_r($filename, TRUE).'</pre>';
+/* 	echo '<pre>'.print_r($filename, TRUE).'</pre>';
 
-	/* echo '<pre>'.print_r($dir, TRUE).'</pre>';
+	echo '<pre>'.print_r($dir, TRUE).'</pre>';
 	echo '<pre>'.print_r($filename, TRUE).'</pre>';
 	echo '<pre>'.print_r($posted_file, TRUE).'</pre>';
 	echo '<pre>'.print_r("{$dir}{$filename}", TRUE).'</pre>'; */
@@ -124,7 +124,7 @@ function upload_to_bucket($posted_file, $folder, $filename){
 	}
 
 	if(move_uploaded_file($posted_file['tmp_name'], "{$dir}{$filename}")){
-		//echo "ok";
+		echo "ok";
 	}
 	
 	chmod("{$dir}{$filename}", 0777);
@@ -139,14 +139,43 @@ function upload_to_bucket($posted_file, $folder, $filename){
 		return TRUE;
 	}
 
-	
-	//echo '<pre>'.print_r("s3cmd -c /home/dl21hex/.s3cfg put {$dir}{$filename} s3://nx001/indicator/{$folder}{$filename}", TRUE).'</pre>'; 
+	// echo '<pre>'.print_r("s3cmd -c /home/dl21hex/.s3cfg put {$dir}{$filename} s3://nx001/indicator/{$folder}{$filename}", TRUE).'</pre>'; 
 	
 	// Acá debo intentar eliminarlo sin validar nada...
-	//exec("s3cmd -c /home/dl21hex/.s3cfg del s3://nx001/{$folder}{$filename}");
-
+	exec("s3cmd -c /home/dl21hex/.s3cfg del s3://nx001/{$folder}{$filename}");
 	
-	unlink("{$dir}{$filename}");
+	//unlink("{$dir}{$filename}");
 
+	// echo '<pre>'.print_r('wait', TRUE).'</pre>'; die();
 	return FALSE;
+}
+
+function download_support($name_with_extension){
+	
+	$bucket_url = "https://nx001.nexter.us-nyc1.upcloudobjects.com/indicator/$name_with_extension";
+	$local_url = "/var/www/html/indicator/public/uploads/$name_with_extension";
+	$local_url_return = "/public/uploads/$name_with_extension";
+
+	//check if file exists in bucket
+	$ch = curl_init($bucket_url);
+	curl_setopt($ch, CURLOPT_NOBODY, true);
+	curl_exec($ch);
+	$retcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	curl_close($ch);
+
+	if($retcode == 200){
+		//file exists in bucket
+		//download file
+		$ch = curl_init($bucket_url);
+		$fp = fopen($local_url, 'wb');
+		curl_setopt($ch, CURLOPT_FILE, $fp);
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_exec($ch);
+		curl_close($ch);
+		fclose($fp);
+
+		return $bucket_url;
+	}else{
+		return $local_url_return;
+	}
 }

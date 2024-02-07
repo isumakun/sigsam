@@ -22,7 +22,7 @@ span.select2{
   <div class="row marginb">
     <div class="col-md-4">
       <label for="category_id">Categoría :</label>
-      <select name="category_id" id="category">
+      <select name="category_id" id="category" required>
         <option></option>
         <?php foreach($category AS $ca) { ?>
           <option value="<?=$ca['id']?>" ><?=$ca['name']?></option>
@@ -89,7 +89,7 @@ span.select2{
   <div class="row marginb">
     <div class="col-md-4">
       <label for="type_id">Tipo de indicador:</label>
-      <select name="type_id">
+      <select name="type_id" required>
         <option value=""></option>
         <?php foreach($types AS $t) { ?>
           <option value="<?=$t['id']?>" ><?=$t['name']?></option>
@@ -98,7 +98,7 @@ span.select2{
     </div>
     <div class="col-md-8">
       <label for="process_id">Proceso:</label>
-      <select name="process_id">
+      <select name="process_id" required>
         <option value=""></option>
         <?php foreach($process AS $p) { ?>
           <option value="<?=$p['id']?>" ><?=$p['name']?></option>
@@ -110,7 +110,7 @@ span.select2{
     <div class="row marginb">
       <div class="col-md-12">
         <label for="charge_id">Responsables:</label>
-        <select class='select2_custom' name='charge_id[]' multiple='multiple' id="charge_id">
+        <select class='select2_custom' name='charge_id[]' multiple='multiple' id="charge_id" required>
           <?php foreach($charges AS $c) { ?>
             <option value="<?=$c['id']?>">[<?=$c['first_name']?> <?=$c['last_name']?>] %<?=$c['job_position']?>% </option>
           <?php } ?>
@@ -118,7 +118,7 @@ span.select2{
       </div>
       <div class="col-md-6 marginb">
         <label for="frequency_id">Frecuencia:</label>
-        <select name="frequency_id">
+        <select name="frequency_id" required>
           <option value=""></option>
           <?php foreach($frequency AS $f) { ?>
             <option value="<?=$f['id']?>"><?=$f['name']?></option>
@@ -131,7 +131,7 @@ span.select2{
       </div>
     </div>
   
-  <input class="confirmp save" type="button" value="Guardar" />
+  <input class="confirmp save blueDf" type="button" value="Guardar" />
   <input style="display: none;" class="submit save" type="submit" value="Guardar" />
 </form>
 <script>

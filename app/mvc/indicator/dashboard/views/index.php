@@ -6,6 +6,7 @@
 .card-body{
     padding: 10px;
     padding-right: 0px;
+    position:relative;
 }
 
 .highlight_row {
@@ -22,6 +23,9 @@
     top: 0;
     padding-left: 0px;
     padding-right: 0px;
+}
+#example{
+    margin-bottom: 35px;
 }
 #example tr, td{
     cursor: pointer;
@@ -44,7 +48,7 @@
 .proobing{
     width: 100%;
     height: 485px;
-    position: relative;
+    /* position: relative; */
     overflow-y: auto;
 }
 .row{
@@ -61,19 +65,30 @@ tr th {
 .padding_10_000{
     padding: 10px 0px 0px 0px;
 }
+#example_wrapper{
+    position: static;
+}
+#center_paginate{
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+    padding-left: 0px !important;
+    background-color: white;
+    padding-bottom: 5px;
+    border-top: outset;
+    display: flex;
+    justify-content: center;
+}
 </style>
-<script src="//code.jquery.com/jquery-1.12.4.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
-<link href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" rel="stylesheet" />
-<div class="card">
-	<div class="card-body">
+
+<div class="card h-100">
+	<div class="card-body h-100">
 		
         <div class="padding_10_000">
             <center><h2>MATRIZ DE SEGUIMIENTO Y MEDICIÓN</h2></center>
         </div>
         
-        <div class="proobing custom_scroll">
+        <div class="proobing custom_scroll" style="height: 93%;">
             <table id="example" class="display fixTableHead no_responsive" cellspacing="0" width="100%">
                 <thead class="">
                     <tr >
@@ -83,8 +98,8 @@ tr th {
                         <th class="text-center nopadding">Ud.</th>
                         <th class="text-center nopadding">Frecuencia</th>
                         <th class="text-center nopadding">Meta</th>
-                        <th class="text-center nopadding">Lim Sup</th>
                         <th class="text-center nopadding">Lim Inf</th>
+                        <th class="text-center nopadding">Lim Sup</th>
                         <th class="text-center nopadding">Tipo</th>
                         <th class="text-center nopadding">Responsable</th>
                         <!-- <th style="display: none;">wewewe</th> -->
@@ -109,17 +124,17 @@ tr th {
                             
                         </td>
                         <td class="text-center">
-                            <?php if( str_replace(' ', '', $ind['upper_limit'])  == (NULL)) {  ?>
-                                <span>N/A</span>
-                            <?php }else { ?>
-                                <span><?=$ind['upper_limit']?></span>
-                            <?php } ?>
-                        </td>
-                        <td class="text-center">
                             <?php if( str_replace(' ', '', $ind['lower_limit'])  == (NULL)) {  ?>
                                 <span>N/A</span>
                             <?php }else { ?>
                                 <span><?=$ind['lower_limit']?></span>
+                            <?php } ?>
+                        </td>
+                        <td class="text-center">
+                            <?php if( str_replace(' ', '', $ind['upper_limit'])  == (NULL)) {  ?>
+                                <span>N/A</span>
+                            <?php }else { ?>
+                                <span><?=$ind['upper_limit']?></span>
                             <?php } ?>
                         </td>
                         <td class="text-center">
@@ -147,11 +162,6 @@ tr th {
 
 <script>
 
-// function removeclass(classname,tablenodes){
-
-//     $("tr."+ classname, tablenodes).removeClass(classname);
-//     console.log($("tr."+ classname+"", tablenodes))
-// }
 
 function createDropdowns(api) {
     api.columns([0, 1]).every(function(d) {
@@ -203,9 +213,17 @@ function createDropdowns(api) {
         }
     });
 }
+$(document).on( 'init.dt', function ( e, settings ) {
+    var api = new $.fn.dataTable.Api( settings );
+    var state = api.state.loaded();
+    if(state != null){
+        let col_search_val_p = state.columns[0].search.search;
+        let col_search_val_i = state.columns[1].search.search;
+        if(col_search_val_p != ''){$(`thead tr:eq(0) th:eq(0) select option:contains(${col_search_val_p})`).attr('selected', 'selected');}
+        if(col_search_val_i != ''){$(`thead tr:eq(0) th:eq(1) select option:contains(${col_search_val_i})`).attr('selected', 'selected');}
+    }
+} );
 $(document).ready(function() {
-
-    
 
     $.fn.dataTable.Api.register('column().searchable()', function() {
       var ctx = this.context[0];
@@ -214,7 +232,7 @@ $(document).ready(function() {
 
 	$("#datagrid_0").dataTable().fnDestroy();
     var table = $('#example').dataTable( {
-        // "stateSave": true,
+        "stateSave": true,
         "fixedHeader": true,
         "orderCellsTop": true,
         "bLengthChange": false,
@@ -231,20 +249,17 @@ $(document).ready(function() {
             $('#example_wrapper').addClass('row')
             $('#example_length').wrap("<div class=\"col-md-6\"></div>");
             $('#example_filter').wrap("<div class=\"col-md-12\"></div>");
-            $('#example_filter').addClass('margindown float_right')
+            $('#example_filter').addClass('margindown float_right');
+            $('#example_paginate').wrap("<div id=\"center_paginate\" class=\"col-md-12\"></div>");
             var buttons = createbuttons();
             $(buttons).insertAfter('#example_wrapper .col-md-12:eq(0)');
         },
         stateLoadParams: function(settings, data) {
-            var col_search_val = data.columns[0].search.search;
-            if (col_search_val != "") {
-              $('thead tr:eq(0) th:eq(0) select option:contains('+col_search_val+')').attr('selected', 'selected');
-            }
-          
+            
         }
     } );
 
-var allPages = table.fnGetNodes();
+    var allPages = table.fnGetNodes();
 
     $(document, allPages).on('click', 'tr:not(th:nth-child(1))', function(){
         
@@ -270,12 +285,8 @@ var allPages = table.fnGetNodes();
         
     })
 
-
-    $(document).on('submit', 'form', function(e){
-        // e.preventDefault()
-        // table.state.clear();
-        // $(this).submit();
-        // $.fn.dataTable.Api.state.clear();
+    $(`thead tr:eq(0) th:eq(0) select`).change( function(e){
+        $(`thead tr:eq(0) th:eq(1) select option:contains(All)`).prop('selected', true).trigger( "change" );
     })
    
      
@@ -296,14 +307,9 @@ function createbuttons(){
         <?php } ?>
         <a id="reporinfo" href="#" class="button green float_right confirm"><span class="fa fa-chart-pie"></span>Reporte</a>
         
-        <a id="cargarinfo" href="#" class="button float_right confirm"><span class="fa fa-chart-line"></span>Cargar informacion</a>
-        
-        
-        
-        
-        
-    </div>`
-    ;
+        <a id="cargarinfo" href="#" class="button blueDf float_right confirm"><span class="fa fa-chart-line"></span>Cargar informacion</a>
+                
+    </div>`;
     return html;
 }
 

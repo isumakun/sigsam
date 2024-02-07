@@ -53,7 +53,7 @@ $calendar = new Calendar();
       <?php if($frequencies['frequency_id']!=1){ ?>
     <div class="col-md-4">
       <label for="age_id">Periodo:</label>
-       <select id="age" name="period_id">
+       <select id="age" name="period_id" required>
         <option selected="selected" disabled="disabled" value="">Seleccionar</option>
           <?php foreach($period AS $p) { ?>
             
@@ -65,7 +65,7 @@ $calendar = new Calendar();
     
     <div class="col-md-4">
       <label for="period_id">Año:</label>
-      <select name="age_id">
+      <select name="age_id" required>
         <option selected="selected" disabled="disabled" value="">Seleccionar</option>
           <?php foreach($age AS $ag) { ?> ?>
             <option value="<?=$ag['id']?>" ><?=$ag['age']?></option>
@@ -127,7 +127,7 @@ $calendar = new Calendar();
     </div>
   </div>
 	
-	<input class="confirmp save" type="button" value="Guardar" />
+	<input class="confirmp save blueDf" type="button" value="Guardar" />
   <input style="display: none;" class="submit save" type="submit" value="Crear" />
 </form>
 
@@ -161,9 +161,21 @@ $calendar = new Calendar();
     }
   });
 
-  $('#final_report_option').on('change', function(){
+  $('#final_report_option').on('change', function(){ 
+  
+    var type = "<?= $indicators[0]['unit']; ?>";
+    var regex = /^\s*\d+\s*(([hH]|horas?)?\s*((:)?\s*(?<=:)(\d{1,2}))?\s*(((?<!\d{1})\d)?((min)|(m))?)?)\s*$/;
+    let option1 = `<input type="text" name="finalValue" id="finalDurationForm" maxlength=8 pattern=""
+      title="Cantidad de tiempo 00:00 (horas, minutos), 
+            puede escribirlo como 
+             &quot;00h 00m&quot; o &quot;00h: 00min&quot;."
+      placeholder="hh:mm" size=30 required>`;
+      let option2 = `<input name="finalValue" type="text" required/>`;
     var html = `
     <div>
+    <div>
+      <label for="value">Valor:</label>${(type=='Horas')? option1 : option2} 
+    </div>
       <label style="width:auto">Análisis : Final</label>
       <textarea class="marginb" name="final_inform" rows="4" cols="50" required></textarea>
     </div>`;

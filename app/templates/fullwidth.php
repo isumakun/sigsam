@@ -30,23 +30,28 @@ defined('UMVC') OR exit('No direct script access allowed'); ?>
 	<link href="<?=BASE_URL?>public/assets/admin/vendors/pace-progress/css/pace.min.css" rel="stylesheet">
 
 	<!-- UMVC JS -->
-	<script src="<?=BASE_URL?>public/assets/js/umvc002.js"></script>
+	<script src="<?=BASE_URL?>public/assets/js/umvc002.js?date=<?= date('Y-m-d His') ?>"></script>
 	<script src="<?=BASE_URL?>public/assets/js/project.js"></script>
 	<script src="<?=BASE_URL?>public/assets/js/respond.min.js"></script>
 	
-	<script src="<?=BASE_URL.'public/vendors/push/serviceWorker.min.js'?>"></script>
-	<script src="<?=BASE_URL.'public/vendors/push/push.min.js'?>"></script>
+	<!-- <script src="<?=BASE_URL.'public/vendors/push/serviceWorker.min.js'?>"></script> -->
+	<!-- <script src="<?=BASE_URL.'public/vendors/push/push.min.js'?>"></script> -->
 
 	<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+	<link href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" rel="stylesheet" />
+
 </head>
-<body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show">
+<body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show" style="height: 100vh;">
 	<?php require 'header.php'; ?>
 
 	<main class="main">
 		<div class="container-fluid container_adept">
-			<div id="main_content" class="content shadow-4">
-				<div class="">
+			<div id="main_content" class="content shadow-4 h-100">
+				<div class="h-100">
 					<?php require 'app/mvc/'.$_SESSION['prefix'].'/'.strtolower($_SESSION['controller']).'/views/'.strtolower($_SESSION['method']).'.php'; ?>
 				</div>
 			</div>

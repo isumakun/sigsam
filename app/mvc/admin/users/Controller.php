@@ -7,7 +7,9 @@ class Controller extends ControllerBase {
 ------------------------------------------------------------------------------*/
 	public function index()
 	{
-		$this->view('', null, 'fullwidth');
+		$data['users'] = $this->model('admin/users')->get_all();
+		$data['page_title'] = 'Usuarios';
+		$this->view('', $data, 'fullwidth');
 	}
 
 /*------------------------------------------------------------------------------
@@ -15,26 +17,22 @@ class Controller extends ControllerBase {
 ------------------------------------------------------------------------------*/
 	public function create()
 	{
-		if ($_POST)
-		{
-			if ($_POST['password']!=$_POST['password2']) {
-				set_notification('Las contraseñas no coinciden', 'error');
+		if ($_POST){
+			$passGenerator = new \passwordGenerator(15, 20, ['old_password', 'myUsername']);
+			$password =  sha1(htmlspecialchars($passGenerator->generate()));
+
+			if ($this->model('admin/users')->create($password)){
+				set_notification("Usuario creado correctamente", 'success', TRUE);
+				redirect("admin/users");
 			}else{
-				if ($this->model('admin/users')->create())
-				{
-					set_notification("Usuario creado correctamente", 'success', TRUE);
-					redirect("admin/users");
-				}
-				else
-				{
-					set_notification("El usuario no pudo ser creado", 'error');
-				}
+				set_notification("El usuario no pudo ser creado", 'error');
 			}
+			
 		}
-		
+		$data['page_title'] = 'Creacion';
 		$data['roles'] = $this->model('admin/users')->get_all_roles();
-		$data['types'] = $this->model('indicator/types')->get_all();
-		$data['charges'] = $this->model('indicator/charges')->get_all();
+		// $data['types'] = $this->model('indicator/types')->get_all();
+		// $data['charges'] = $this->model('indicator/charges')->get_all($_SESSION['user']['company_id']);
 		$data['companies'] = $this->model('indicator/companies')->get_all();
 
 		$this->view('',$data);
@@ -43,55 +41,56 @@ class Controller extends ControllerBase {
 /*------------------------------------------------------------------------------
 	EDIT
 ------------------------------------------------------------------------------*/
-	public function edit()
-	{
+	public function edit(){
+			
+		// error_reporting(E_ALL);
+		// ini_set('display_errors', TRUE);
+		
 		if (!$data['user'] = $this->model('admin/users')->get_by_id($_GET['id']))
 		{
 			set_notification("No existe el registro", 'error');
 			redirect("admin/users");
 		}
 
-		if ($_POST)
-		{
-			if (!empty($_POST['password'])) {
-				if (sha1($_POST['password'])==$_POST['old_password']) {
-					set_notification("La nueva contraseña no puede ser igual a la anterior", 'error');
-				}else{
-					$_POST['password'] = sha1($_POST['password']);
-					if ($this->model('admin/users')->update_by_id($_GET['id'], $_POST))
-					{
-						set_notification("Guardado");
-						redirect("admin/users");
-					}
-					else
-					{
-						set_notification("El registro no pudo ser actualizado", 'error');
-					}
-				}
+		if ($_POST){
+			$passGenerator = new \passwordGenerator(15, 20, ['old_password', 'myUsername']);
+			$password =  sha1(htmlspecialchars($passGenerator->generate()));
+			if ($this->model('admin/users')->update_by_id($_GET['id'], $_POST, $password)){
+				set_notification("Guardado");
+				redirect("admin/users");
 			}else{
-				$_POST['password'] = $_POST['old_password'];
-
-				if ($this->model('admin/users')->update_by_id($_GET['id'], $_POST))
-				{
-					set_notification("Guardado");
-					redirect("admin/users");
-				}
-				else
-				{
-					set_notification("El registro no pudo ser actualizado", 'error');
-				}
+				set_notification("El registro no pudo ser actualizado", 'error');
 			}
+			
+			die();
 		}
 		
 		$data['roles'] = $this->model('admin/users')->get_all_roles();
 		$data['types'] = $this->model('indicator/types')->get_all();
-		$data['charges'] = $this->model('indicator/charges')->get_all();
+		$data['charges'] = $this->model('indicator/charges')->get_all($_SESSION['user']['company_id']);
 		$data['companies'] = $this->model('indicator/companies')->get_all();
 		$data['user_companies'] = $this->model('indicator/users_companies')->get_by_user_id($_GET['id']);
 
 		$this->view('',$data);
 	}
 
+	public function delete(){
+		$change=null;
+		if($_GET['is_active'] == 0){
+			$change = 1;
+		}else{			
+			$change = 0;
+		}
+		
+		if ($this->model('admin/users')->change_is_active($_GET['id'], $change)){
+			
+			set_notification("Estado cambiado", 'success', TRUE);
+			
+		}else{
+			set_notification("No se pudo cambiar el estado", 'Error');
+		}
+		redirect("admin/users");
+	}
 	private function prevent_hacking($jj, $message=null) {
 		sleep(3);
 
@@ -201,10 +200,10 @@ class Controller extends ControllerBase {
 	public function auto_login()
 	{
 		
-		// error_reporting(E_ALL);
-		// ini_set('display_errors', TRUE);
+		error_reporting(E_ALL);
+		ini_set('display_errors', TRUE);
 		// header('HTTP/1.1 302 Found');
-		session_name('sigsam');
+
 		if (empty($username)) {
 			$username = $_GET['username'];
 		}

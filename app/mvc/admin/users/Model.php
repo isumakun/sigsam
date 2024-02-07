@@ -123,10 +123,14 @@ class Model extends \ModelBase {
 		return $this->db->query("
 
 			SELECT
-				*
+				ar.id,
+				ar.name,
+				ar.main_page,
+				ar.is_active
 
 			FROM
-				`admin_roles`
+				`admin_roles` AS ar
+			WHERE ar.is_active = 1
 
 
 		")->fetchAll();
@@ -146,7 +150,8 @@ class Model extends \ModelBase {
 				u.email,
 				IF(uc.company_id = 0, 'Todas', GROUP_CONCAT(c.name SEPARATOR ',')) AS companies,
 				r.name AS rol,
-				IF(u.is_active=1, 'Activo', 'Desactivado') AS state
+				IF(u.is_active=1, 'Activo', 'Desactivado') AS state,
+				u.is_active
 
 			FROM
 				`admin_users` AS u
@@ -178,33 +183,39 @@ class Model extends \ModelBase {
 	public function get_by_id($user_id)
 	{
 		$sql = "
-
-			SELECT
-				u.*, ur.role_id
-
+				SELECT
+				u.id,
+				u.username,
+				u.first_name,
+				u.last_name,
+				u.email,
+				u.created_at,
+				u.updated_at,
+				u.last_login,
+				u.is_deleted,
+				u.is_active,
+				ur.role_id,
+				ic.job_position
 			FROM
 				`admin_users` AS u
 			INNER JOIN admin_users_roles AS ur
-				ON
-					ur.user_id = u.id
-
+			ON
+				ur.user_id = u.id
 			INNER JOIN admin_roles AS r
-				ON
-					r.id = ur.role_id
-
+			ON
+				r.id = ur.role_id
 			LEFT JOIN indicator_users_companies AS uc
-				ON
-					uc.user_id = u.id
-
+			ON
+				uc.user_id = u.id
 			LEFT JOIN indicator_companies AS c
-				ON
-					c.id = uc.company_id
-
-			WHERE 	u.id = $user_id
-
-			GROUP BY u.id
-
-			LIMIT 1
+			ON
+				c.id = uc.company_id
+			LEFT JOIN indicator_charges AS ic
+			ON ic.user_id = u.id
+			WHERE u.id = $user_id
+			GROUP BY
+				u.id
+			LIMIT 1;
 		";
 
 		return $this->db->query($sql)->fetchAll()[0];
@@ -305,14 +316,23 @@ class Model extends \ModelBase {
 		");
 	}
 
+	public function change_is_active($id, $is_active){
+		$sql = "
+		UPDATE `admin_users` SET
+		`is_active` = '$is_active',
+		`updated_at` = now()
+		WHERE `id` = '$id';";
+		
+		return $this->db->query($sql);
+	}
+
 /*----------------------------------------------------------------------
 	CREATE
 	* Tengo que revisarlo pra que se cree en la tabla ADMIN_USERS
  ---------------------------------------------------------------------*/
-	public function create()
+	public function create($password)
 	{
-		$password = sha1($_POST['password']);
-
+		
 		$query = $this->db->query("
 
 			INSERT
@@ -325,17 +345,20 @@ class Model extends \ModelBase {
 		$sql = "
 
 			INSERT INTO `admin_users_roles` (`user_id`, `role_id`, `is_active`)
-			VALUES ('$id', '{$_POST['role_id']}', '1');
+			VALUES ('$id', '{$_POST['rol_id']}', '1');
 
 		";
 
 		$query = $this->db->exec($sql);
 
 		foreach ($_POST['companies'] as $company) {
+
 			$query = $this->db->exec("
 
 				INSERT INTO `indicator_users_companies` (`user_id`, `company_id`)
 				VALUES ('$id', '$company');
+				INSERT INTO `indicator_charges` (`user_id`, `job_position`, `company_id`)
+				VALUES ('$id', '{$_POST['job_position']}', '$company');
 
 			");
 		}
@@ -347,8 +370,7 @@ class Model extends \ModelBase {
 /*------------------------------------------------------------------------------
 	UPDATE BY ID
 ------------------------------------------------------------------------------*/
-	public function update_by_id($id, $params)
-	{
+	public function update_by_id($id, $params, $password){
 		$this->db->query("
 
 			UPDATE		admin_users
@@ -356,7 +378,8 @@ class Model extends \ModelBase {
 						`first_name` = '{$params['first_name']}',
 						`last_name` = '{$params['last_name']}',
 						`email` = '{$params['email']}',
-						`password` = '{$params['password']}'
+						`password` = '$password',
+						`updated_at` = now()
 			WHERE		id = '$id'
 
 		");
@@ -367,15 +390,31 @@ class Model extends \ModelBase {
 			WHERE (`user_id` = '$id');
 
 		");
+		$this->db->query("
 
+			DELETE IGNORE FROM `indicator_charges`
+			WHERE (`user_id` = '$id');
+
+		");
+		
 		foreach ($params['companies'] as $company) {
 			$query = $this->db->exec("
 
 				INSERT INTO `indicator_users_companies` (`user_id`, `company_id`)
 				VALUES ('$id', '$company');
+				INSERT INTO `indicator_charges` (`user_id`, `job_position`, `company_id`)
+				VALUES ('$id', '{$params['job_position']}', '$company');
 
 			");
 		}
+		
+		$this->db->query("
+
+			UPDATE `admin_users_roles` SET
+			`role_id` = '{$params['rol_id']}'
+			WHERE `user_id` = '$id';
+
+		");
 
 		return TRUE;
 	}

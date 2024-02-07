@@ -7,10 +7,8 @@ Class Model extends \ModelBase {
 /*------------------------------------------------------------------------------
 	GET ALL
 ------------------------------------------------------------------------------*/
-	public function get_all($company)
-	{
+	public function get_all(){
 		return $this->db->query("
-
 			SELECT		p.id,
 						p.name,
 						p.type_process_id,
@@ -21,7 +19,8 @@ Class Model extends \ModelBase {
 						ON tp.id = p.type_process_id
 			INNER JOIN	indicator_companies AS cs
 						ON cs.id = p.company_id
-		    WHERE p.company_id = '$company'
+		    WHERE p.company_id = {$_SESSION['user']['company_id']}
+			AND p.is_deleted = 0
 			ORDER BY	p.id ASC
 
 		")->fetchAll();
@@ -55,8 +54,8 @@ Class Model extends \ModelBase {
 		return $this->db->query("
 
 			INSERT
-			INTO		indicator_processes (`name`, `type_process_id`)
-			VALUES		('{$params['name']}', '{$params['type_process_id']}')
+			INTO		indicator_processes (`name`, `type_process_id`, `company_id`)
+			VALUES		('{$params['name']}', '{$params['type_process_id']}', '{$_SESSION['user']['company_id']}')
 
 		");
 	}
@@ -83,8 +82,8 @@ Class Model extends \ModelBase {
 	{
 		return $this->db->query("
 
-			DELETE
-			FROM		indicator_processes
+			UPDATE `indicator_processes`
+			SET `is_deleted` = '1'		
 			WHERE		id = '$id'
 
 		");

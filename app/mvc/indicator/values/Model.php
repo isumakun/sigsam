@@ -29,6 +29,7 @@ Class Model extends \ModelBase {
 			INNER JOIN	admin_users AS u
 						ON u.id = v.created_by
 			AND i.visibility = 1
+			AND v.visibility = 1
 			ORDER BY	v.created_at DESC
 
 		";
@@ -86,6 +87,7 @@ public function get_all_edit($id)
 		
 			WHERE   p.company_id = ".$_SESSION['user']['company_id']." AND v.id =$id
 		AND i.visibility = 1
+		AND v.visibility = 1
 		ORDER BY	i.id ASC
 		LIMIT 1
 	   
@@ -96,22 +98,23 @@ public function get_all_edit($id)
 /*------------------------------------------------------------------------------
 	GET BY ID
 ------------------------------------------------------------------------------*/
-public function get_age_id($id)
+public function get_age_id($id, $visibility)
 {
 	return $this->db->query("
 
 		SELECT		a.name, a.id
 		FROM		indicator_informs AS v
 		INNER JOIN	indicator_ages a
-		ON			a.id = v. age_id
+		ON			a.id = v.age_id
 		WHERE		v.indicator_id = '$id'
+		AND v.visibility = $visibility
 		GROUP BY a.id
 	")->fetchAll();
 }
 /*------------------------------------------------------------------------------
 	GET ALL
 ------------------------------------------------------------------------------*/
-public function get_test($ind_id, $year)
+public function get_test($ind_id, $year, $type, $visibility)
 {
 
 	$sql = "
@@ -129,7 +132,8 @@ public function get_test($ind_id, $year)
 		    v.created_at,
 		    v.support,
 		    v.support1,
-		    i.frequency_id
+		    i.frequency_id,
+			v.inform_class_id
 		FROM
 		    indicator_informs AS v
 		INNER JOIN indicator_indicators AS i
@@ -146,8 +150,9 @@ public function get_test($ind_id, $year)
 		    u.id = v.created_by
 
 		WHERE
+		ia.name = 
 		    IFNULL(
-		        ia.name = COALESCE(
+		        COALESCE(
 		            (
 		            SELECT
 		                iaa.name
@@ -159,6 +164,8 @@ public function get_test($ind_id, $year)
 		            WHERE
 		                iaa.name = YEAR('$year')
 		            AND  ii.indicator_id = $ind_id
+					AND ii.inform_class_id = $type
+					AND ii.visibility = 1
 		            LIMIT 1
 		        ),
 		        (
@@ -172,16 +179,78 @@ public function get_test($ind_id, $year)
 		        WHERE
 		            iaa.name = YEAR(DATE_SUB('$year', INTERVAL 1 YEAR))
 		            AND  ii.indicator_id = $ind_id
+					AND ii.inform_class_id = $type
+					AND ii.visibility = 1
 		        LIMIT 1
 		    )
 		        ),
-		        ia.name
-		    ) AND v.indicator_id = $ind_id AND i.visibility = 1
+		        (SELECT
+				iaa.name
+			FROM
+				indicator_informs AS ii
+			INNER JOIN indicator_ages AS iaa
+			ON
+				ii.age_id = iaa.id
+			WHERE
+				ii.indicator_id = $ind_id
+				AND ii.inform_class_id = $type
+				AND ii.visibility = 1
+				ORDER BY
+					ii.id
+					DESC
+			LIMIT 1)
+		    ) AND v.indicator_id = $ind_id AND i.visibility = $visibility AND v.visibility = 1
+			AND v.inform_class_id = $type
 		ORDER BY
 		    p.id ASC";
-// if($ind_id == 288){
-// 	die($sql);
-// }
+
+	return $this->db->query($sql)->fetchAll();
+}
+
+public function get_test_by_year($ind_id, $year, $type, $visibility)
+{
+
+	$sql = "
+		SELECT
+		    v.id,
+		    v.indicator_id,
+		    v.inform,
+		    v.age_id,
+		    ia.name,
+		    i.name AS 'indicator',
+		    v.value,
+		    p.name AS 'period',
+		    v.created_by,
+		    u.username AS 'created_by',
+		    v.created_at,
+		    v.support,
+		    v.support1,
+		    i.frequency_id,
+			v.inform_class_id
+		FROM
+		    indicator_informs AS v
+		INNER JOIN indicator_indicators AS i
+		ON
+		    i.id = v.indicator_id
+		    LEFT JOIN indicator_ages AS ia
+		ON
+		    v.age_id = ia.id
+		LEFT JOIN indicator_periods AS p
+		ON
+		    p.id = v.period_id
+		INNER JOIN admin_users AS u
+		ON
+		    u.id = v.created_by
+
+		WHERE
+			ia.name = YEAR('$year')
+			AND v.indicator_id = $ind_id AND i.visibility = $visibility
+			AND v.inform_class_id = $type
+			AND v.visibility = 1
+		ORDER BY
+		    p.id ASC";
+
+				// die($sql);
 	return $this->db->query($sql)->fetchAll();
 }
 /*------------------------------------------------------------------------------
@@ -213,14 +282,15 @@ public function get_test($ind_id, $year)
 						ON u.id = v.created_by
 			WHERE      v.indicator_id = $id AND v.age_id = $age_id
 			AND i.visibility = 1
+			AND v.visibility = 1
 			ORDER BY	v.id ASC
 
 		")->fetchAll();
 	}
 /*------------------------------------------------------------------------------
-	GET ALL
+	get_graph_anual
 ------------------------------------------------------------------------------*/
-	public function get_graph($ind_id, $year){
+	public function get_graph_anual($ind_id, $year, $type, $visibility){
 		$sql = "
 		SELECT
 			GROUP_CONCAT(v.value ORDER BY p.id) AS 'value',
@@ -241,50 +311,25 @@ public function get_test($ind_id, $year)
 		    u.id = v.created_by
 
 		WHERE
-		    IFNULL(
-		        ia.name = COALESCE(
-		            (
-		            SELECT
-		                iaa.name
-		            FROM
-		                indicator_informs AS ii
-		            INNER JOIN indicator_ages AS iaa
-		            ON
-		                ii.age_id = iaa.id
-		            WHERE
-		                iaa.name = YEAR('$year')
-		                AND  ii.indicator_id = $ind_id
-		            LIMIT 1
-		        ),
-		        (
-		        SELECT
-		            iaa.name
-		        FROM
-		            indicator_informs AS ii
-		        INNER JOIN indicator_ages AS iaa
-		        ON
-		            ii.age_id = iaa.id
-		        WHERE
-		            iaa.name = YEAR(DATE_SUB('$year', INTERVAL 1 YEAR))
-		            AND  ii.indicator_id = $ind_id
-		        LIMIT 1
-		    )
-		        ),
-		        ia.name
-		    ) AND v.indicator_id = $ind_id AND i.visibility = 1
+			ia.name =  YEAR('$year')
+			AND v.indicator_id = $ind_id AND i.visibility = $visibility
+			AND v.inform_class_id = $type
+			AND v.visibility = 1
 		    ORDER BY p.name,v.value
 			";
 
-
+	// 	if($_SESSION['user']['id'] == 107){
+	// 	die($sql);
+	// }
 		return $this->db->query($sql)->fetchAll();
 	}
-/*------------------------------------------------------------------------------
-	GET ALL
-------------------------------------------------------------------------------*/
-public function get_graph_filter($ind_id, $year)
-{
-	return $this->db->query("
 
+
+/*------------------------------------------------------------------------------
+	get_graph_anual
+------------------------------------------------------------------------------*/
+	public function get_graph_monthly($ind_id, $year, $type, $visibility){
+		$sql = "
 		SELECT
 			GROUP_CONCAT(v.value ORDER BY p.id) AS 'value',
 			GROUP_CONCAT(CONCAT('',p.name,'') ORDER BY p.id ) AS 'period'
@@ -304,41 +349,182 @@ public function get_graph_filter($ind_id, $year)
 		    u.id = v.created_by
 
 		WHERE
-		    IFNULL(
-		        ia.name = COALESCE(
-		            (
-		            SELECT
-		                iaa.name
-		            FROM
-		                indicator_informs AS ii
-		            INNER JOIN indicator_ages AS iaa
-		            ON
-		                ii.age_id = iaa.id
-		            WHERE
-		                iaa.name = YEAR('$year')
-		                AND  ii.indicator_id = $ind_id
-		            LIMIT 1
-		        ),
-		        (
-		        SELECT
-		            iaa.name
-		        FROM
-		            indicator_informs AS ii
-		        INNER JOIN indicator_ages AS iaa
-		        ON
-		            ii.age_id = iaa.id
-		        WHERE
-		            iaa.name = YEAR(DATE_SUB('$year', INTERVAL 1 YEAR))
-		            AND  ii.indicator_id = $ind_id
-		        LIMIT 1
-		    )
-		        ),
-		        ia.name
-		    ) AND v.indicator_id = $ind_id AND i.visibility = 1
+			ia.name =  YEAR('$year')
+			AND v.indicator_id = $ind_id AND i.visibility = $visibility
+			AND v.inform_class_id = $type
+			AND v.visibility = 1
 		    ORDER BY p.name,v.value
-			
+			";
 
-	")->fetchAll();
+	// 	if($_SESSION['user']['id'] == 107){
+	// 	die($sql);
+	// }
+		return $this->db->query($sql)->fetchAll();
+	}
+/*------------------------------------------------------------------------------
+	GET ALL
+------------------------------------------------------------------------------*/
+public function get_graph_filter($ind_id, $year, $type, $visibility)
+{
+	$sql = "
+
+	SELECT
+		GROUP_CONCAT(v.value ORDER BY p.id) AS 'value',
+		GROUP_CONCAT(CONCAT('',p.name,'') ORDER BY p.id ) AS 'period'
+		FROM
+		indicator_informs AS v
+	INNER JOIN indicator_indicators AS i
+	ON
+		i.id = v.indicator_id
+		LEFT JOIN indicator_ages AS ia
+	ON
+		v.age_id = ia.id
+	LEFT JOIN indicator_periods AS p
+	ON
+		p.id = v.period_id
+	INNER JOIN admin_users AS u
+	ON
+		u.id = v.created_by
+
+	WHERE
+	ia.name = 
+		IFNULL(
+			COALESCE(
+				(
+				SELECT
+					iaa.name
+				FROM
+					indicator_informs AS ii
+				INNER JOIN indicator_ages AS iaa
+				ON
+					ii.age_id = iaa.id
+				WHERE
+					iaa.name = YEAR('$year')
+					AND  ii.indicator_id = $ind_id
+					AND ii.inform_class_id = $type
+					AND ii.visibility = 1
+				LIMIT 1
+			),
+			(
+			SELECT
+				iaa.name
+			FROM
+				indicator_informs AS ii
+			INNER JOIN indicator_ages AS iaa
+			ON
+				ii.age_id = iaa.id
+			WHERE
+				iaa.name = YEAR(DATE_SUB('$year', INTERVAL 1 YEAR))
+				AND  ii.indicator_id = $ind_id
+				AND ii.inform_class_id = $type
+				AND ii.visibility = 1
+			LIMIT 1
+		)
+			),
+			(SELECT
+				iaa.name
+			FROM
+				indicator_informs AS ii
+			INNER JOIN indicator_ages AS iaa
+			ON
+				ii.age_id = iaa.id
+			WHERE
+				 ii.indicator_id = $ind_id
+				AND ii.inform_class_id = $type
+				AND ii.visibility = 1
+				ORDER BY ii.id DESC
+			LIMIT 1)
+		) AND v.indicator_id = $ind_id AND i.visibility = $visibility AND v.visibility = 1
+		AND v.inform_class_id = $type
+		ORDER BY p.name,v.value";
+
+	// if($_SESSION['user']['id'] == 107){
+	// 		die($sql);
+	// 	}
+	return $this->db->query($sql)->fetchAll();
+}
+
+/*------------------------------------------------------------------------------
+	GET ALL
+------------------------------------------------------------------------------*/
+public function get_graph_filter_anual($ind_id, $year, $type, $visibility)
+{
+	$sql = "
+
+	SELECT
+		GROUP_CONCAT(v.value ORDER BY p.id) AS 'value',
+		GROUP_CONCAT(CONCAT('',ia.name,'') ORDER BY ia.id ) AS 'period'
+		FROM
+		indicator_informs AS v
+	INNER JOIN indicator_indicators AS i
+	ON
+		i.id = v.indicator_id
+		LEFT JOIN indicator_ages AS ia
+	ON
+		v.age_id = ia.id
+	LEFT JOIN indicator_periods AS p
+	ON
+		p.id = v.period_id
+	INNER JOIN admin_users AS u
+	ON
+		u.id = v.created_by
+
+	WHERE
+	ia.name = 
+		IFNULL(
+			COALESCE(
+				(
+				SELECT
+					iaa.name
+				FROM
+					indicator_informs AS ii
+				INNER JOIN indicator_ages AS iaa
+				ON
+					ii.age_id = iaa.id
+				WHERE
+					iaa.name = YEAR('$year')
+					AND  ii.indicator_id = $ind_id
+					AND ii.inform_class_id = $type
+					AND ii.visibility = 1
+				LIMIT 1
+			),
+			(
+			SELECT
+				iaa.name
+			FROM
+				indicator_informs AS ii
+			INNER JOIN indicator_ages AS iaa
+			ON
+				ii.age_id = iaa.id
+			WHERE
+				iaa.name = YEAR(DATE_SUB('$year', INTERVAL 1 YEAR))
+				AND  ii.indicator_id = $ind_id
+				AND ii.inform_class_id = $type
+				AND ii.visibility = 1
+			LIMIT 1
+		)
+			),
+			(SELECT
+				iaa.name
+			FROM
+				indicator_informs AS ii
+			INNER JOIN indicator_ages AS iaa
+			ON
+				ii.age_id = iaa.id
+			WHERE
+				 ii.indicator_id = $ind_id
+				AND ii.inform_class_id = $type
+				AND ii.visibility = 1
+				ORDER BY ii.id DESC
+			LIMIT 1)
+		) AND v.indicator_id = $ind_id AND i.visibility = $visibility AND v.visibility = 1
+		AND v.inform_class_id = $type
+		ORDER BY p.name,v.value";
+
+	// if($_SESSION['user']['id'] == 107){
+	// 		die($sql);
+	// 	}
+	return $this->db->query($sql)->fetchAll();
 }
 /*------------------------------------------------------------------------------
 	GET ALL
@@ -359,6 +545,7 @@ public function get_analysis($variable)
 					ON u.id = v.created_by
 		WHERE      v.indicator_id = $variable AND v.analysis_end != ''
 		AND i.visibility = 1
+		AND v.visibility = 1
 		ORDER BY	v.id ASC
 		LIMIT		1
 
@@ -387,6 +574,7 @@ public function get_analysis($variable)
 			LEFT JOIN	indicator_ages AS a
 						ON a.id = v.age_id
 			AND i.visibility = 1
+			AND v.visibility = 1
 			ORDER BY	p.id ASC
 
 		")->fetchAll();
@@ -415,6 +603,7 @@ public function get_analysis($variable)
 						ON a.id = v.age_id
 			WHERE 		v.indicator_id = $id
 			AND i.visibility = 1
+			AND v.visibility = 1
 			ORDER BY	p.id ASC
 
 		";
@@ -439,35 +628,43 @@ public function get_analysis($variable)
 /*------------------------------------------------------------------------------
 	GET ALL
 ------------------------------------------------------------------------------*/
-public function get_value_result($indicator_id, $age)
-{
-$stamentc="";
-if($age != ""){
-	if ($stamentc=="") {
-		$stamentc="a.name = '$age'";
-	}else{
-		$stamentc .=" AND a.name = '$age'";
-	}
-}
+public function get_value_result($indicator_id, $year){
+
 	$sql ="
 
-		SELECT		v.id,
-					v.indicator_id,
-					v.period_id,
-					i.name AS 'indicator',
+		SELECT
+			v.id,
+			v.indicator_id,
+			v.period_id,
+            CASE
+            	WHEN v.period_id IS NOT NULL AND p.name = 'Primer Cuatrimestre' THEN 'ABRIL'
+                WHEN v.period_id IS NOT NULL AND p.name = 'Segundo Cuatrimestre' THEN 'AGOSTO'
+                WHEN v.period_id IS NOT NULL AND p.name = 'Tercer Cuatrimestre' THEN 'DICIEMBRE'
+                WHEN v.period_id IS NOT NULL AND p.name = 'Primer Semestre' THEN 'JUNIO'
+                WHEN v.period_id IS NOT NULL AND p.name = 'Segundo Semestre' THEN 'DICIEMBRE'
+                WHEN v.period_id IS NOT NULL AND p.name = 'Primer Trimestre' THEN 'MARZO'
+                WHEN v.period_id IS NOT NULL AND p.name = 'Segundo Trimestre' THEN 'JUNIO'
+                WHEN v.period_id IS NOT NULL AND p.name = 'Tercer Trimestre' THEN 'SEPTIEMBRE'
+                WHEN v.period_id IS NOT NULL AND p.name = 'Cuarto Trimestre' THEN 'DICIEMBRE'
+				WHEN v.period_id IS NOT NULL AND p.name = 'Primer Bimestre' THEN 'FEBRERO'
+                WHEN v.period_id IS NOT NULL AND p.name = 'Segundo Bimestre' THEN 'ABRIL'
+                WHEN v.period_id IS NOT NULL AND p.name = 'Tercer Bimestre' THEN 'JUNIO'
+                WHEN v.period_id IS NOT NULL AND p.name = 'Cuarto Bimestre' THEN 'AGOSTO'
+				WHEN v.period_id IS NOT NULL AND p.name = 'Quinto Bimestre' THEN 'OCTUBRE'
+				WHEN v.period_id IS NOT NULL AND p.name = 'Sexto Bimestre' THEN 'DICIEMBRE'
+                WHEN v.period_id IS NULL THEN 'DICIEMBRE'
+                ELSE p.name
+            END AS 'period',
 					v.value,
-					p.name AS period,
 					p.frequency_id
 		FROM		indicator_informs AS v
-		INNER JOIN	indicator_indicators AS i
-					ON i.id = v.indicator_id
-		INNER JOIN	indicator_periods AS p
+        LEFT JOIN	indicator_periods AS p
 					ON p.id = v.period_id
 		LEFT JOIN	indicator_ages AS a
 					ON a.id = v.age_id
-		WHERE      v.indicator_id = $indicator_id AND ($stamentc OR p.name=$age)
-		AND i.visibility = 1
-		ORDER BY	v.id ASC
+		WHERE v.indicator_id = $indicator_id 
+		AND a.name = $year
+		AND v.visibility = 1;
 
 	";
 
@@ -555,6 +752,7 @@ if($age != ""){
 						ON u.id = v.created_by
 			WHERE		v.id = '$id'
 			AND i.visibility = 1
+			AND v.visibility = 1
 			LIMIT		1
 
 		")->fetchAll()[0];
@@ -574,6 +772,7 @@ if($age != ""){
 						ON i.id = v.indicator_id
 			WHERE		v.id = $inform_id
 			AND i.visibility = 1
+			AND v.visibility = 1
 			LIMIT		1
 		";
 		return $this->db->query($sql)->fetchAll()[0];
@@ -655,7 +854,7 @@ if($age != ""){
 						 ,'{$params['period_id']}'
 						 ,'{$params['age_id']}'
 						 ,'{$params['final_inform']}'
-						 ,'{$params['value']}'
+						 ,'{$params['finalValue']}'
 						 ,'{$params['created_by']}'
 						 ,'{$params['support1']}'
 						 , now()
@@ -672,7 +871,7 @@ if($age != ""){
 			VALUES		('{$params['indicator_id']}'
 						 ,'{$params['period_id']}'
 						 ,'{$params['final_inform']}'
-						 ,'{$params['value']}'
+						 ,'{$params['finalValue']}'
 						 ,'{$params['created_by']}'
 						 ,'{$params['support1']}'
 						 , now()
@@ -690,7 +889,7 @@ if($age != ""){
 /*------------------------------------------------------------------------------
 	GET ALL
 ------------------------------------------------------------------------------*/
-public function get_name($variable, $year)
+public function get_name($variable, $year, $visibility)
 {
 	$sql = "
 	SELECT
@@ -706,7 +905,7 @@ public function get_name($variable, $year)
 			ON
 			ig.indicator_id = i.id
 			WHERE
-			ig.year =
+			ig.year = 
 			COALESCE(
 		        (
 		        	SELECT
@@ -717,13 +916,16 @@ public function get_name($variable, $year)
 		            ON
 		                ii.age_id = iaa.id
 		            inner join  indicator_goals AS er
-		            on er.`year` = iaa.name
+					ON
+					er.indicator_id = ii.indicator_id
 		            WHERE
 		                er.`year` = YEAR('$year') AND ii.indicator_id = $variable
+						AND er.visibility = 1
+						AND ii.visibility = 1
 		            LIMIT 1
 			    ),
 			    (
-			    SELECT
+					SELECT
 	                er.`year`
 	            FROM
 	                indicator_informs AS ii
@@ -731,17 +933,25 @@ public function get_name($variable, $year)
 	            ON
 	                ii.age_id = iaa.id
 	            inner join  indicator_goals AS er
-	            on er.`year` = iaa.name
+				ON
+				er.indicator_id = ii.indicator_id
 	            WHERE
 		            er.`year` = YEAR(
 			            DATE_SUB('$year', INTERVAL 1 YEAR)
 			        ) AND ii.indicator_id = $variable
+					AND er.visibility = 1
+					AND ii.visibility = 1
 			    LIMIT 1
 			),
-			    ig.`year`
-			    ) AND ig.indicator_id = $variable AND i.visibility = 1
-			ORDER BY ig.`creation_date` DESC LIMIT 1";
+			ig.`year` 
+			    ) AND i.id = $variable AND i.visibility = $visibility
+				AND ig.visibility = 1
+				ORDER BY ig.creation_date DESC
+			 LIMIT 1";
 			
+			// if($_SESSION['user']['id'] == 107){
+			// 	die($sql);
+			// }
 
 	return $this->db->query($sql)->fetchAll();
 }
@@ -753,36 +963,49 @@ public function update_by_id($id, $params)
 	// $params['value'] = str_replace(',','.',$params['value']);
 	// $params['analysis'] = str_replace(',','.',$params['analysis']);
 	// $params['analysis_end'] = str_replace(',','.',$params['analysis_end']);
-	if(!empty($params['period_id'])){
-		$sql = "
+
+	$sql = "
 
 		UPDATE		indicator_informs
 		SET			`value` =  COALESCE(NULLIF('{$params['value']}', ''), `value`),
-					`period_id` = COALESCE(NULLIF('{$params['period_id']}', ''''), null),
+					`period_id` = COALESCE(NULLIF('{$params['period_id']}', ''), null),
 					`inform` =  COALESCE(NULLIF('{$params['inform']}', ''), `inform`),
 					`support` = COALESCE(NULLIF('{$params['support']}', ''), `support`),
 					`support1` = COALESCE(NULLIF('{$params['support1']}', ''), `support1`),
-					`inform_type_id` = '{$params['inform_type']}',
-					`inform_class_id` = COALESCE(NULLIF('{$params['inform_class']}', ''), `inform_class_id`),
-					`age_id` = COALESCE(NULLIF('{$params['age_id']}', ''''), '{$params['period_id']}')
+					`inform_type_id` = '{$params['inform_type_id']}',
+					`inform_class_id` = COALESCE(NULLIF('{$params['inform_class_id']}', ''), `inform_class_id`),
+					`age_id` = COALESCE(NULLIF('{$params['age_id']}', ''), '{$params['period_id']}')
 		WHERE		id = '$id'
 
 	";
-	}else{
-		$sql = "
 
-		UPDATE		indicator_informs
-		SET			`value` =  COALESCE(NULLIF('{$params['value']}', ''), `value`),
-					`inform` =  COALESCE(NULLIF('{$params['inform']}', ''), `inform`),
-					`support` = COALESCE(NULLIF('{$params['support']}', ''), `support`),
-					`support1` = COALESCE(NULLIF('{$params['support1']}', ''), `support1`),
-					`inform_type_id` = '{$params['inform_type']}',
-					`inform_class_id` = COALESCE(NULLIF('{$params['inform_class']}', ''), `inform_class_id`),
-					`age_id` = COALESCE(NULLIF('{$params['age_id']}', ''''), '{$params['period_id']}')
-		WHERE		id = '$id'
+	
+	return $this->db->query($sql);
+}
 
+/*------------------------------------------------------------------------------
+	Insert modification in indicator informs log
+------------------------------------------------------------------------------*/
+public function insert_indicator_informs_log($inform_id,$prev, $nuev){
+	$sql = "
+		INSERT INTO `indicator_informs_modification_log`(
+			`unchanged_fields`,
+			`modified_fields`,
+			`indicator_informs_id`,
+			`modified_by`,
+			`modification_date`
+		)
+		VALUES(
+			COALESCE(NULLIF('{$prev}', ''), NULL),
+			'$nuev',
+			'$inform_id',
+			'{$_SESSION['user']['id']}',
+			NOW()
+		)
 	";
-	}
+	// if($_SESSION['user']['id'] == 107){
+	// 	die($sql);
+	// }
 	return $this->db->query($sql);
 }
 
@@ -808,8 +1031,6 @@ public function update_by_id($id, $params)
 					ifm.period_id,
 					ifm.value,
 					ifm.inform,
-					ifm.created_by,
-					ifm.created_at,
 					ifm.support,
 					ifm.support1,
 					ifm.age_id,
@@ -817,9 +1038,25 @@ public function update_by_id($id, $params)
 					ifm.inform_class_id
 			FROM 	indicator_informs AS ifm
 			WHERE ifm.id = $id
+			AND ifm.visibility = 1
 		";
 
 		return $this->db->query($sql)->fetchAll();
 
+	}
+
+	/*------------------------------------------------------------------------------
+	obtain_row
+	------------------------------------------------------------------------------*/
+	public function turn_off_visibility($id){
+		$sql = "
+			UPDATE
+				`indicator_informs`
+			SET
+				`visibility` = '0'
+			WHERE
+				`id` = $id";
+
+		return $this->db->query($sql);
 	}
 }

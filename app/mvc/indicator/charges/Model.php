@@ -24,7 +24,7 @@ Class Model extends \ModelBase {
 						ON u.id = c.user_id
 			INNER JOIN	indicator_companies AS c1
 						ON c1.id = c.company_id
-				WHERE   $id = c.company_id
+				WHERE   c.company_id = $id 
 				AND u.is_active = 1
 			ORDER BY	c.id ASC
 

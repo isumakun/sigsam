@@ -41,17 +41,21 @@ Class Controller extends ControllerBase {
 			// }
 
 			if ($_FILES['support']['size']!=0) {
-				$prefix1 = rand(1, 10000);
-				$dir1 = "/public/uploads/".$prefix1.'_'. $_FILES['support']['name'];
-				$_POST['support'] = $dir1;
-				upload_to_bucket($_FILES['support'], '', $prefix1.'_'. $_FILES['support']['name']);
+				$prefix = date("Ymd_His");				
+				$new_str = preg_replace('/\s+/', '', $_FILES['support']['name']);
+				
+				$support_name = $prefix.'_'.$new_str;
+				$_POST['support'] = $support_name;
+				upload_to_bucket($_FILES['support'], '', $support_name);
 			}
 			
 			if ($_FILES['support1']['size']!=0) {
-				$prefix2 = rand(1, 10000);
-				$dir2 = "/public/uploads/".$prefix2.'_'. $_FILES['support1']['name'];
-				$_POST['support1'] = $dir2;
-				upload_to_bucket($_FILES['support1'], '', $prefix2.'_'. $_FILES['support1']['name']);
+				$prefix = date("Ymd_His");
+				$new_str2 = preg_replace('/\s+/', '', $_FILES['support1']['name']);
+
+				$support_name2 = $prefix.'_'.$new_str2;
+				$_POST['support1'] = $support_name2;
+				upload_to_bucket($_FILES['support1'], '', $support_name2);
 			}		
 			
 			if ($id_inform = $this->model('indicator/values')->create($_POST)){
@@ -74,36 +78,57 @@ Class Controller extends ControllerBase {
 			$lastname = $user['last_name'];
 			$indname =  $user['indicator'];
 			// $email1 = 'mzarate@daabon.com.co';
-
+			// Caribbean
 			if ($_SESSION['user']['company_id']==1) {
-				$email1 = 'kcabrera@daabon.com.co';
-			}
+				$email1 = 'ccastro@c-ecosoaps.com';
+			}//tequendama
+			else if($_SESSION['user']['company_id']==2) {
+				$email1 = 'cmorales@daabon.com.co';
+			}//terlica
 			else if($_SESSION['user']['company_id']==3) {
 				$email1 = 'lospino@daabon.com.co';
-			}
-			else if($_SESSION['user']['company_id']==2) {
-				$email1 = 'kcabrera@daabon.com.co';
-			}
+			}//superportuaria
 			else if($_SESSION['user']['company_id']==4) {
-				$email1 = 'hcotes@daabon.com.co';
-			}
+				$email1 = 'tvergara@daabon.com.co';
+			}//ZFA
 			else if($_SESSION['user']['company_id']==5) {
-				$email1 = 'lospino@daabon.com.co';
-			}
+				$email1 = 'macarranza@zonafrancalasamericas.com';
+			}//elogia
 			else if($_SESSION['user']['company_id']==6) {
 				$email1 = 'aamaya@daabon.com.co';
-			}
+			}//bios
 			else if($_SESSION['user']['company_id']==7) {
 				$email1 = 'hcotes@daabon.com.co';
-			}
+			}//samaria
 			else if($_SESSION['user']['company_id']==8) {
-				$email1 = 'lcruz@daabon.com.co';
+				$email1 = 'lcruz@daabon.com.co ';
+			}//ZFT
+			else if($_SESSION['user']['company_id']==9) {
+				$email1 = 'ssta@zonafrancatayrona.com';
+			}//tequendama
+			else if($_SESSION['user']['company_id']==10) {
+				$email1 = 'hcotes@daabon.com.co';
+			}//palma y trabajo
+			else if($_SESSION['user']['company_id']==11) {
+				$email1 = 'srodriguez@palmatra.com';
+			}//grupalma
+			else if($_SESSION['user']['company_id']==12) {
+				$email1 = 'srodriguez@palmatra.com';
+			}//superlogistic
+			else if($_SESSION['user']['company_id']==13) {
+				$email1 = 'tvergara@daabon.com.co';
+			}//trading service
+			else if($_SESSION['user']['company_id']==14) {
+				$email1 = 'macarranza@zonafrancalasamericas.com';
+			}//Derivados y fracciones de palma
+			else if($_SESSION['user']['company_id']==15) {
+				$email1 = 'cmorales@daabon.com.co';
 			}
 		
 		// Datos de la cuenta de correo utilizada para enviar vía SMTP
 		$smtpHost = "smtp.office365.com";  // Dominio alternativo brindado en el email de alta 
-		$smtpUsuario = "master@daabon.com.co";  // Mi cuenta de correo
-		$smtpClave = "D@@b0n.0rg@n1c";  // Mi contraseña
+		$smtpUsuario = "noreply-a01b20tq@daabon.com.co";  // Mi cuenta de correo
+		$smtpClave = '9FokqRNtG!5U$04jT$OiD@b0n.0rg@n1c';  // Mi contraseña
 
 		$mail = new \PHPMailer();
 
@@ -115,12 +140,12 @@ Class Controller extends ControllerBase {
 
 		// VALORES A MODIFICAR //
 		$mail->Host = "smtp.office365.com"; 
-		$mail->Username = "master@daabon.com.co"; 
-		$mail->Password = "D@@b0n.0rg@n1c";
+		$mail->Username = "noreply-a01b20tq@daabon.com.co"; 
+		$mail->Password = '9FokqRNtG!5U$04jT$OiD@';
 		$mail->IsHTML(true); // El correo se envía como HTML
 
-		$mail->From = 'master@daabon.com.co';
-		// $mail->addBCC('master@daabon.com.co');
+		$mail->From = 'noreply-a01b20tq@daabon.com.co';
+		// $mail->addBCC('noreply-a01b20tq@daabon.com.co');
 		$mail->FromName = 'SAM';
 		$mail->AddAddress($email1); // Esta es la dirección a donde enviamos los datos del formulario
 		 // Esta es la dirección a donde enviamos los datos del formulario
@@ -186,32 +211,55 @@ Class Controller extends ControllerBase {
 		}
 
 		if ($_POST){
-
+			
 			// if ($_FILES){
 
 				$row_to_update = $this->model('indicator/values')->obtain_row($_GET['id']);
-
 				
-				if($_FILES['support']['size'] > 500000){
-					redirect_back('El archivo excede la capacidad máxima permitida (50 mb)', 'error');
-				}
-				$path = getcwd();
+				
+				// if($_FILES['support']['size'] > 500000){
+				// 	redirect_back('El archivo excede la capacidad máxima permitida (50 mb)', 'error');
+				// }
+				// $path = getcwd();
 				
 				if ($_FILES['support']['size']!=0) {
-					$prefix1 = rand(1, 10000);
-					$dir1 = "/public/uploads/".$prefix1.'_'.$_FILES['support']['name'];
-					$_POST['support'] = $dir1;
-					upload_to_bucket($_FILES['support'], '', $prefix1.'_'. $_FILES['support']['name']);
+					$prefix = date("Ymd_His");				
+					$new_str = preg_replace('/\s+/', '', $_FILES['support']['name']);
+					
+					$support_name = $prefix.'_'.$new_str;
+					$_POST['support'] = $support_name;
+					upload_to_bucket($_FILES['support'], '', $support_name);
+				}
+				
+				if ($_FILES['support1']['size']!=0) {
+					$prefix = date("Ymd_His");
+					$new_str2 = preg_replace('/\s+/', '', $_FILES['support1']['name']);
+	
+					$support_name2 = $prefix.'_'.$new_str2;
+					$_POST['support1'] = $support_name2;
+					upload_to_bucket($_FILES['support1'], '', $support_name2);
 				}
 
-				if ($_FILES['support1']['size']!=0) {
-					$prefix2 = rand(1, 10000);
-					$dir2 = "/public/uploads/".$prefix2.'_'. $_FILES['support1']['name'];
-					$_POST['support1'] = $dir2;
-					upload_to_bucket($_FILES['support1'], '', $prefix2.'_'. $_FILES['support1']['name']);
+				$UpdatedColumns=array_diff_assoc($_POST,$row_to_update[0]);
+				
+				if(!empty($UpdatedColumns)){
+					$previous = json_encode($row_to_update[0]);
+					$updated = json_encode($UpdatedColumns);
+					
+
+					$result = $this->model('indicator/values')->insert_indicator_informs_log($_GET['id'], $previous, $updated);
 				}
-			
-			
+				
+				// if($_SESSION['user']['id'] == 107){
+				// 	echo "POST---------------";
+				// 	echo '<pre>'.print_r($_POST).'</pre>';
+				// 	echo "row to update---------------";
+				// 	echo '<pre>'.print_r($row_to_update).'</pre>';
+
+					
+				// 	echo '<pre>'.print_r($UpdatedColumns).'</pre>';
+				// 	die();
+				// }
 			
 				if ($this->model('indicator/values')->update_by_id($_GET['id'], $_POST)){
 					set_notification("Registro creado correctamente", 'success', TRUE);
@@ -268,8 +316,9 @@ Class Controller extends ControllerBase {
 		}
 		
 
-		if ($this->model('indicator/values')->delete_by_id($_GET['id']))
+		if ($this->model('indicator/values')->turn_off_visibility($_GET['id']))
 		{
+			$result = $this->model('indicator/values')->insert_indicator_informs_log($_GET['id'], NULL, '{"visibility":"0"}');
 			set_notification("Eliminado", 'success', TRUE);
 		}
 		else

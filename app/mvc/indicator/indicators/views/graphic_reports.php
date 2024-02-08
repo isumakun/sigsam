@@ -184,14 +184,14 @@
                   <td >
                     <div>
                       <?php if (!empty($cb['support'])) { ?>
-                              <a data-toggle="tooltip" data-placement="bottom" title="Descargar" href="<?=download_support($cb['name_support'])?>" download="<?= $cb['name_support'] ?>"><i class="fas fa-file-download fa-2x" ></i><?= $cb['name_support'] ?></a>
+                        <a data-toggle="tooltip" data-placement="bottom" title="Descargar" href="<?=download_support($cb['name_support'])?>" download="<?= $cb['name_support'] ?>"><i class="fas fa-file-download fa-2x" ></i><?= $cb['name_support'] ?></a>
                       <?php } ?>                    
                     </div>
                     <div>
                       <?php if (!empty($cb['support1'])) { ?>
                         <a data-toggle="tooltip" data-placement="bottom" title="Descargar" href="<?=download_support($cb['name_support1'])?>" download="<?= $cb['name_support1'] ?>"><i class="fas fa-file-download fa-2x" ></i><?= $cb['name_support1'] ?></a>
                     <?php } ?>
-                    </div>                  
+                    </div>                
                   </td>
                 </tr>
               <?php } ?>
@@ -500,9 +500,7 @@ var axis = $('#container23').highcharts().colorAxis[0];
         });
     }
     if(metakind == -1){
-      
       if(!gl2){
-        
         axis.update({
             dataClasses: [
             {

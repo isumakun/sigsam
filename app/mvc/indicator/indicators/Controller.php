@@ -41,9 +41,7 @@ Class Controller extends ControllerBase {
 					redirect("indicator/dashboard");
 				}
 			}
-			// if($_SESSION['user']['id'] == 107){
-			// 	die($sql);
-			// }
+
 			foreach ($data['indicators'] as $key => $values) {
 				$data['indicators'][$key]['name_support'] = basename($values['support']);
 				$data['indicators'][$key]['name_support1'] = basename($values['support1']);
@@ -198,14 +196,14 @@ Class Controller extends ControllerBase {
 
 				foreach ($report as $r) {
 					$r['value_result'] = $this->model('indicator/values')->get_value_result($r['id'],$_POST['age']);
-					$lower_limit = check_if_only_spaces($r['lower_limit'])[0];
-					$upper_limit = check_if_only_spaces($r['upper_limit'])[0];
-					$goal = 	   check_if_only_spaces($r['goal'])[0];
-					$type = 	   check_if_only_spaces($r['type'])[0];
-					$r['lower_limit'] = (!isset($lower_limit))? "N/A":$lower_limit;
-					$r['upper_limit'] = (!isset($upper_limit))? "N/A":$upper_limit;
-					$r['goal'] = 		(!isset($goal))? "N/A" : $goal;
-					$r['type'] = 		(!isset($type))? "---": $type;
+					$lower_limit = check_if_only_spaces($r['lower_limit']);
+					$upper_limit = check_if_only_spaces($r['upper_limit']);
+					$goal = 	   check_if_only_spaces($r['goal']);
+					$type = 	   check_if_only_spaces($r['type']);
+					$r['lower_limit'] = (empty($lower_limit))? "N/A":$lower_limit[0];
+					$r['upper_limit'] = (empty($upper_limit))? "N/A":$upper_limit[0];
+					$r['goal'] = 		(empty($goal))? "N/A" : $goal[0];
+					$r['type'] = 		(empty($type))? "---": $type[0];
 					$data['report'][]=$r;
 				}
 				$postData=json_encode($data,1);
@@ -217,15 +215,17 @@ Class Controller extends ControllerBase {
 			$data['year'] = date("Y");
 			foreach ($report as $r) {
 				$r['value_result'] = $this->model('indicator/values')->get_value_result($r['id'],$data['year']);
-				$lower_limit = check_if_only_spaces($r['lower_limit'])[0];
-				$upper_limit = check_if_only_spaces($r['upper_limit'])[0];
-				$goal = 	   check_if_only_spaces($r['goal'])[0];
-				$type = 	   check_if_only_spaces($r['type'])[0];
-				
-				$r['lower_limit'] = (!isset($lower_limit))? "N/A":$lower_limit;
-				$r['upper_limit'] = (!isset($upper_limit))? "N/A":$upper_limit;
-				$r['goal'] = 		(!isset($goal))? "N/A" : $goal;
-				$r['type'] = 		(!isset($type))? "---": $type;
+				$lower_limit = check_if_only_spaces($r['lower_limit']);
+				$upper_limit = check_if_only_spaces($r['upper_limit']);
+				$goal = 	   check_if_only_spaces($r['goal']);
+				$type = 	   check_if_only_spaces($r['type']);
+				// echo "<pre>";
+				// print_r($lower_limit);
+				// echo "</pre>";
+				$r['lower_limit'] = (empty($lower_limit))? "N/A": $lower_limit[0];
+				$r['upper_limit'] = (empty($upper_limit))? "N/A":$upper_limit[0];
+				$r['goal'] = 		(empty($goal))? "N/A" : $goal[0];
+				$r['type'] = 		(empty($type))? "---": $type[0];
 				// echo '<pre>';print_r($r); echo '</pre>';
 				// echo '<pre>';print_r(count($r['value_result'])); echo '</pre>';
 				$data['report'][]=$r;

@@ -176,7 +176,7 @@ function logchekElements($element) {
 	if($match[0]){
 		preg_match_all('/\d+/', $match[0], $n);
 		if($n[0][0]){
-			if($n[0][1]){
+			if(isset($n[0][1]) && !empty(isset($n[0][1]))){
 			  return "{$n[0][0]}.{$n[0][1]}";
 			}else{
 			  return $n[0][0];
@@ -188,7 +188,7 @@ function logchekElements($element) {
 			$element,
 			$match
 		);
-		if($match[0]){
+		if(isset($match[0]) && !empty($match[0])){
 			return $match[0];
 		}else{
 			return $element;

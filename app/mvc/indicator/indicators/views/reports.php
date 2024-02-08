@@ -175,7 +175,7 @@
                                 <select class="browser-default custom-select" name="category" id="category">
                                     <option hidden selected disabled>Categor&iacute;a</option>
                                     <?php foreach($categories as $c) { ?>
-                                        <option value="<?=$c['name']?>"<?=($categories['id'] == $c['id'] ? 'selected' : '')?>>
+                                        <option value="<?=$c['name']?>">
                                             <?=$c['name']?>
                                         </option>
                                     <?php } ?>
@@ -185,7 +185,7 @@
                                 <select class="browser-default custom-select" name="process" id="process">
                                     <option hidden selected disabled>Proceso</option>
                                     <?php foreach($processes as $ps) { ?>
-                                        <option value="<?=$ps['name']?>"<?=($processes['id'] == $ps['id'] ? 'selected' : '')?>>
+                                        <option value="<?=$ps['name']?>">
                                             <?=$ps['name']?>
                                         </option>
                                     <?php } ?>
@@ -195,7 +195,7 @@
                                 <select class="browser-default custom-select" name="indicators" id="indicators">
                                     <option hidden selected disabled>Indicador</option>
                                     <?php foreach($indicators as $ins) { ?>
-                                        <option data-process="<?=$ins['process']?>" value="<?=$ins['name']?>"<?=($processes['id'] == $ins['id'] ? 'selected' : '')?>>
+                                        <option data-process="<?=$ins['process']?>" value="<?=$ins['name']?>">
                                             <?=$ins['name']?>
                                         </option>
                                     <?php } ?>

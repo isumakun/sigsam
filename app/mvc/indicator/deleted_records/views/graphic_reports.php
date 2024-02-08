@@ -123,9 +123,9 @@
 		<figure class="highcharts-figure" style="padding-top:40px; height: 90%;">
 		    <div id="container23" style="height: 100%;"></div>
         <center>
-        <button id="plain">Plana</button>
-        <button id="inverted">Invertida</button>
-        <button id="polar">Polar</button>
+          <button id="plain">Plana</button>
+          <button id="inverted">Invertida</button>
+          <button id="polar">Polar</button>
         </center>
         
 		</figure>

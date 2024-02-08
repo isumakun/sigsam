@@ -5,10 +5,10 @@
 ----------------------------------------------------------------------*/
 
 //header('Location: ../mantenimiento.php');
-// error_reporting(0);
-// ini_set('display_errors', FALSE);
-error_reporting(E_ALL);
-ini_set('display_errors', TRUE);
+error_reporting(0);
+ini_set('display_errors', FALSE);
+// error_reporting(E_ALL);
+// ini_set('display_errors', TRUE);
 session_start();
 setlocale(LC_MONETARY, 'en_US');
 define('UMVC', 'executing');

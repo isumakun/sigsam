@@ -392,8 +392,8 @@ class Model extends \ModelBase {
 		");
 		$this->db->query("
 
-			DELETE IGNORE FROM `indicator_charges`
-			WHERE (`user_id` = '$id');
+			UPDATE `indicator_charges`
+			SET `job_position` = '{$params['job_position']}' WHERE `user_id` = '$id';
 
 		");
 		
